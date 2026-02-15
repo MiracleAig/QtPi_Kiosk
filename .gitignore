@@ -1,0 +1,28 @@
+# Qt Creator
+*.pro.user
+*.pro.user.*
+*.qmake.stash
+*.autosave
+
+# Build folders
+build-*/
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# Qt generated
+moc_*
+qrc_*
+ui_*
+
+# OS
+.DS_Store
+Thumbs.db

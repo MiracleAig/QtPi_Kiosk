@@ -1,0 +1,63 @@
+[
+    {
+        "classes": [
+            {
+                "className": "ProductLookup",
+                "lineNumber": 6,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "barcode",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 11,
+                        "name": "lookup",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "ProductLookup",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "product",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 14,
+                        "name": "productReady",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "message",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 15,
+                        "name": "error",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "productlookup.h",
+        "outputRevision": 69
+    }
+]

@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/qt/qml/Kiosk/">
+    <file alias="components/qmldir">C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/Kiosk/components/qmldir</file>
+    <file alias="screens/qmldir">C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/Kiosk/screens/qmldir</file>
+  </qresource>
+</RCC>
+

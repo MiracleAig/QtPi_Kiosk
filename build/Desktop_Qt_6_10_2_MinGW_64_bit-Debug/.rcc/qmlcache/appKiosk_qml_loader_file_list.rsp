@@ -1,0 +1,13 @@
+--resource
+C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/.qt/rcc/qmake_Kiosk.qrc
+--resource
+C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/.qt/rcc/appKiosk_raw_qml_0.qrc
+--resource
+C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/.qt/rcc/appKiosk_raw_qml_0_extra_qmldirs.qrc
+/qt/qml/Kiosk/Main.qml
+/qt/qml/Kiosk/AppState.qml
+/qt/qml/Kiosk/MockProducts.js
+/qt/qml/Kiosk/components/BarcodeWedge.qml
+/qt/qml/Kiosk/screens/ScanScreen.qml
+/qt/qml/Kiosk/screens/ConfirmScreen.qml
+/qt/qml/Kiosk/screens/SavedScreen.qml

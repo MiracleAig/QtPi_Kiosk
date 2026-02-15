@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="/qt/qml/Kiosk/">
+    <file alias="Main.qml">C:/Users/mirac/Documents/Kiosk/Main.qml</file>
+    <file alias="AppState.qml">C:/Users/mirac/Documents/Kiosk/AppState.qml</file>
+    <file alias="MockProducts.js">C:/Users/mirac/Documents/Kiosk/MockProducts.js</file>
+    <file alias="components/BarcodeWedge.qml">C:/Users/mirac/Documents/Kiosk/components/BarcodeWedge.qml</file>
+    <file alias="screens/ScanScreen.qml">C:/Users/mirac/Documents/Kiosk/screens/ScanScreen.qml</file>
+    <file alias="screens/ConfirmScreen.qml">C:/Users/mirac/Documents/Kiosk/screens/ConfirmScreen.qml</file>
+    <file alias="screens/SavedScreen.qml">C:/Users/mirac/Documents/Kiosk/screens/SavedScreen.qml</file>
+  </qresource>
+</RCC>
+

@@ -1,0 +1,47 @@
+{
+    "formatRevision": 1,
+    "modules": [
+        {
+            "moduleFiles": [
+                {
+                    "entries": [
+                        {
+                            "codegenResult": 0,
+                            "column": 5,
+                            "durationMicroseconds": 0,
+                            "functionName": "resetToScan",
+                            "line": 9,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 5,
+                            "durationMicroseconds": 0,
+                            "functionName": "setBarcode",
+                            "line": 15,
+                            "message": "Functions without type annotations won't be compiled"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 5,
+                            "durationMicroseconds": 0,
+                            "functionName": "setProduct",
+                            "line": 20,
+                            "message": "Functions without type annotations won't be compiled"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 5,
+                            "durationMicroseconds": 0,
+                            "functionName": "markSaved",
+                            "line": 25,
+                            "message": ""
+                        }
+                    ],
+                    "filePath": "C:/Users/mirac/Documents/Kiosk/AppState.qml"
+                }
+            ],
+            "moduleId": "Kiosk(appKiosk)"
+        }
+    ]
+}
