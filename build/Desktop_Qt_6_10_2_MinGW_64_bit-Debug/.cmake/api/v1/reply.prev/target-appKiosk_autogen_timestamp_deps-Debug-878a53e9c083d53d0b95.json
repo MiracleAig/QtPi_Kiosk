@@ -60,12 +60,12 @@
 	"dependencies" : 
 	[
 		{
-			"backtrace" : 4,
-			"id" : "appKiosk_copy_qml::@6890427a1f51a3e7e1df"
+			"backtrace" : 0,
+			"id" : "generate_qmlls_build_ini_file::@6890427a1f51a3e7e1df"
 		},
 		{
-			"backtrace" : 0,
-			"id" : "appKiosk_qmlimportscan::@6890427a1f51a3e7e1df"
+			"backtrace" : 4,
+			"id" : "appKiosk_copy_qml::@6890427a1f51a3e7e1df"
 		},
 		{
 			"backtrace" : 6,
@@ -73,7 +73,7 @@
 		},
 		{
 			"backtrace" : 0,
-			"id" : "generate_qmlls_build_ini_file::@6890427a1f51a3e7e1df"
+			"id" : "appKiosk_qmlimportscan::@6890427a1f51a3e7e1df"
 		}
 	],
 	"folder" : 

@@ -106,7 +106,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk-Debug-b344afe00b3a435a0949.json",
+					"jsonFile" : "target-appKiosk-Debug-bcc56458ac87156d45a5.json",
 					"name" : "appKiosk",
 					"projectIndex" : 0
 				},
@@ -120,7 +120,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk_autogen_timestamp_deps-Debug-3b7aa696ca6f35ddc1b0.json",
+					"jsonFile" : "target-appKiosk_autogen_timestamp_deps-Debug-cedf5b264725c535d857.json",
 					"name" : "appKiosk_autogen_timestamp_deps",
 					"projectIndex" : 0
 				},

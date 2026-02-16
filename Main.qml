@@ -1,7 +1,6 @@
 import QtQuick 6.5
 import QtQuick.Controls 6.5
-
-
+import QtQuick.Controls.Material 6.5
 import "screens" as Screens
 
 ApplicationWindow {
@@ -11,12 +10,30 @@ ApplicationWindow {
     height: 480
     title: "FridgeSenseUI 2.0"
 
+    // Dark mode styling
+    Material.theme: Material.Dark
+    Material.accent: Material.Cyan
+    Material.primary: Material.BlueGrey
+
+    // App background
+    color: "#0f1115"
+
+    Rectangle {
+        anchors.fill: parent
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#0f1115" }
+            GradientStop { position: 1.0; color: "#151b28" }
+        }
+    }
+
     StackView {
         id: nav
         anchors.fill: parent
 
         initialItem: Screens.ScanScreen {
-            onGoConfirm: nav.push(confirmComponent)
+            onGoConfirm: (product) => {
+                nav.push(confirmComponent, { product: product })
+            }
         }
     }
 
@@ -28,6 +45,10 @@ ApplicationWindow {
         }
     }
 
+    Component.onCompleted: {
+        inventoryManager.loadInventory()
+    }
+
     Component {
         id: savedComponent
         Screens.SavedScreen {
@@ -37,7 +58,6 @@ ApplicationWindow {
                     AppState.resetToScan()
                 })
             }
-
         }
     }
 }

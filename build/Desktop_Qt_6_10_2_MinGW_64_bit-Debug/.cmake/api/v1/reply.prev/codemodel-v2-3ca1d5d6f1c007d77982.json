@@ -6,8 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"hasInstallRule" : true,
-					"jsonFile" : "directory-.-Debug-9d2000776f5db3e25168.json",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.16"
@@ -79,35 +78,35 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "all_qmllint::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-all_qmllint-Debug-327c08ccab7dc7d20181.json",
+					"jsonFile" : "target-all_qmllint-Debug-5a25000de8646a4b109f.json",
 					"name" : "all_qmllint",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "all_qmllint_json::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-all_qmllint_json-Debug-7a967594f49a1abb8410.json",
+					"jsonFile" : "target-all_qmllint_json-Debug-f23432988f947cad4808.json",
 					"name" : "all_qmllint_json",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "all_qmllint_module::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-all_qmllint_module-Debug-27fcdc1c738ca2bec00c.json",
+					"jsonFile" : "target-all_qmllint_module-Debug-8b81e0b4ec635da8f594.json",
 					"name" : "all_qmllint_module",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "all_qmltyperegistrations::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-all_qmltyperegistrations-Debug-42b2969a0b2e51047364.json",
+					"jsonFile" : "target-all_qmltyperegistrations-Debug-4905c535e6b96ee84676.json",
 					"name" : "all_qmltyperegistrations",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk-Debug-c790784e36cc1a74fef8.json",
+					"jsonFile" : "target-appKiosk-Debug-42f00280beda7aa24a9f.json",
 					"name" : "appKiosk",
 					"projectIndex" : 0
 				},
@@ -121,21 +120,21 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk_autogen_timestamp_deps-Debug-33ce03d42713be06d9f7.json",
+					"jsonFile" : "target-appKiosk_autogen_timestamp_deps-Debug-878a53e9c083d53d0b95.json",
 					"name" : "appKiosk_autogen_timestamp_deps",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk_copy_qml::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk_copy_qml-Debug-18baad0aae531441665c.json",
+					"jsonFile" : "target-appKiosk_copy_qml-Debug-1a2159389212a80cb0ff.json",
 					"name" : "appKiosk_copy_qml",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk_copy_res::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk_copy_res-Debug-132f57790f2cd2e03ecf.json",
+					"jsonFile" : "target-appKiosk_copy_res-Debug-b490082d4a2ab50280dc.json",
 					"name" : "appKiosk_copy_res",
 					"projectIndex" : 0
 				},
@@ -149,28 +148,28 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk_qmllint::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk_qmllint-Debug-bbb77ff7893298a30743.json",
+					"jsonFile" : "target-appKiosk_qmllint-Debug-24f47985fcbb69af9612.json",
 					"name" : "appKiosk_qmllint",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk_qmllint_json::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk_qmllint_json-Debug-446b603a8091e437c0c8.json",
+					"jsonFile" : "target-appKiosk_qmllint_json-Debug-55826f9e3473d1ded193.json",
 					"name" : "appKiosk_qmllint_json",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk_qmllint_module::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk_qmllint_module-Debug-93ff4884b36ce7d729a5.json",
+					"jsonFile" : "target-appKiosk_qmllint_module-Debug-069ae3a5f2e19745278e.json",
 					"name" : "appKiosk_qmllint_module",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "appKiosk_qmltyperegistration::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appKiosk_qmltyperegistration-Debug-83eccc0bca91db6e3b7b.json",
+					"jsonFile" : "target-appKiosk_qmltyperegistration-Debug-b6417eb2f141110a8ed0.json",
 					"name" : "appKiosk_qmltyperegistration",
 					"projectIndex" : 0
 				},

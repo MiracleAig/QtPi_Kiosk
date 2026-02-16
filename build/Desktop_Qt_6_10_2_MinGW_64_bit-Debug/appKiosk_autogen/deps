@@ -2,12 +2,15 @@ appKiosk_autogen/timestamp: \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/QFlags \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/QJsonObject \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/QList \
+	C:/Qt/6.10.2/mingw_64/include/QtCore/QMap \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/QMetaType \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/QObject \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/QSharedDataPointer \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/QString \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/QUrl \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/QVariant \
+	C:/Qt/6.10.2/mingw_64/include/QtCore/QVariantList \
+	C:/Qt/6.10.2/mingw_64/include/QtCore/QVariantMap \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/q17memory.h \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/q20functional.h \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/q20iterator.h \
@@ -141,6 +144,8 @@ appKiosk_autogen/timestamp: \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/qutf8stringview.h \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/quuid.h \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/qvariant.h \
+	C:/Qt/6.10.2/mingw_64/include/QtCore/qvariantlist.h \
+	C:/Qt/6.10.2/mingw_64/include/QtCore/qvariantmap.h \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/qvarlengtharray.h \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/qversiontagging.h \
 	C:/Qt/6.10.2/mingw_64/include/QtCore/qxptype_traits.h \
@@ -713,6 +718,39 @@ appKiosk_autogen/timestamp: \
 	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6QuickTools/Qt6QuickToolsTargets-relwithdebinfo.cmake \
 	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6QuickTools/Qt6QuickToolsTargets.cmake \
 	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6QuickTools/Qt6QuickToolsVersionlessTargets.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QIBaseDriverPluginAdditionalTargetInfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QIBaseDriverPluginConfig.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QIBaseDriverPluginTargets-relwithdebinfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QIBaseDriverPluginTargets.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QMimerSQLDriverPluginAdditionalTargetInfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QMimerSQLDriverPluginConfig.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QMimerSQLDriverPluginTargets-relwithdebinfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QMimerSQLDriverPluginTargets.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QOCIDriverPluginAdditionalTargetInfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QOCIDriverPluginConfig.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QOCIDriverPluginTargets-relwithdebinfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QOCIDriverPluginTargets.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QODBCDriverPluginAdditionalTargetInfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QODBCDriverPluginConfig.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QODBCDriverPluginTargets-relwithdebinfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QODBCDriverPluginTargets.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QPSQLDriverPluginAdditionalTargetInfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QPSQLDriverPluginConfig.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QPSQLDriverPluginTargets-relwithdebinfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QPSQLDriverPluginTargets.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QSQLiteDriverPluginAdditionalTargetInfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QSQLiteDriverPluginConfig.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QSQLiteDriverPluginTargets-relwithdebinfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6QSQLiteDriverPluginTargets.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6SqlAdditionalTargetInfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6SqlConfig.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6SqlConfigVersion.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6SqlConfigVersionImpl.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6SqlDependencies.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6SqlPlugins.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6SqlTargets-relwithdebinfo.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6SqlTargets.cmake \
+	C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Sql/Qt6SqlVersionlessAliasTargets.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCXXInformation.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
 	C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCommonLanguageInclude.cmake \
@@ -966,6 +1004,8 @@ appKiosk_autogen/timestamp: \
 	C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeRCCompiler.cmake \
 	C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeSystem.cmake \
 	C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/appKiosk_autogen/moc_predefs.h \
+	C:/Users/mirac/Documents/Kiosk/inventorymanager.cpp \
+	C:/Users/mirac/Documents/Kiosk/inventorymanager.h \
 	C:/Users/mirac/Documents/Kiosk/main.cpp \
 	C:/Users/mirac/Documents/Kiosk/productlookup.cpp \
 	C:/Users/mirac/Documents/Kiosk/productlookup.h \

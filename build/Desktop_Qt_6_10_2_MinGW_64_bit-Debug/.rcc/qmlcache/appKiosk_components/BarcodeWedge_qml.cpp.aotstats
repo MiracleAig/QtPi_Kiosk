@@ -8,7 +8,7 @@
                         {
                             "codegenResult": 0,
                             "column": 21,
-                            "durationMicroseconds": 4000,
+                            "durationMicroseconds": 1000,
                             "functionName": "onPressed",
                             "line": 11,
                             "message": ""

@@ -26,13 +26,13 @@
 			"qt6_add_qml_module",
 			"qt_add_qml_module",
 			"add_dependencies",
+			"_qt_internal_write_deferred_qmlls_build_ini_file",
 			"_qt_internal_qml_copy_files_to_build_dir",
 			"_qt_internal_scan_qml_imports",
 			"_qt_internal_generate_deploy_qml_imports_script",
 			"cmake_language",
 			"_qt_internal_finalize_executable",
 			"qt6_finalize_target",
-			"_qt_internal_write_deferred_qmlls_build_ini_file",
 			"target_include_directories",
 			"_qt_internal_qml_type_registration",
 			"target_sources",
@@ -62,11 +62,11 @@
 			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Network/Qt6NetworkConfig.cmake",
 			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Qml/Qt6QmlDependencies.cmake",
 			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Qml/Qt6QmlConfig.cmake",
+			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Qml/Qt6QmlTargets.cmake",
 			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Core/Qt6CoreTargets.cmake",
 			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfig.cmake",
-			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Qml/Qt6QmlTargets.cmake",
-			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Core/Qt6CoreMacros.cmake:848:EVAL",
-			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Qml/Qt6QmlMacros.cmake:1099:EVAL"
+			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Qml/Qt6QmlMacros.cmake:1099:EVAL",
+			"C:/Qt/6.10.2/mingw_64/lib/cmake/Qt6Core/Qt6CoreMacros.cmake:848:EVAL"
 		],
 		"nodes" : 
 		[
@@ -284,6 +284,22 @@
 				"parent" : 37
 			},
 			{
+				"command" : 6,
+				"file" : 14,
+				"line" : 55,
+				"parent" : 28
+			},
+			{
+				"file" : 15,
+				"parent" : 39
+			},
+			{
+				"command" : 5,
+				"file" : 15,
+				"line" : 61,
+				"parent" : 40
+			},
+			{
 				"command" : 4,
 				"file" : 0,
 				"line" : 674,
@@ -299,52 +315,53 @@
 				"command" : 7,
 				"file" : 7,
 				"line" : 76,
-				"parent" : 40
+				"parent" : 43
 			},
 			{
 				"command" : 7,
 				"file" : 4,
 				"line" : 333,
-				"parent" : 41
-			},
-			{
-				"file" : 16,
-				"parent" : 42
-			},
-			{
-				"command" : 6,
-				"file" : 16,
-				"line" : 54,
-				"parent" : 43
-			},
-			{
-				"file" : 15,
 				"parent" : 44
 			},
 			{
-				"command" : 5,
-				"file" : 15,
-				"line" : 61,
+				"file" : 17,
 				"parent" : 45
 			},
 			{
 				"command" : 6,
-				"file" : 14,
-				"line" : 55,
-				"parent" : 28
+				"file" : 17,
+				"line" : 54,
+				"parent" : 46
 			},
 			{
-				"file" : 17,
+				"file" : 16,
 				"parent" : 47
 			},
 			{
 				"command" : 5,
-				"file" : 17,
+				"file" : 16,
 				"line" : 61,
 				"parent" : 48
 			},
 			{
+				"file" : 1,
+				"line" : -1,
+				"parent" : 0
+			},
+			{
 				"command" : 13,
+				"file" : 18,
+				"line" : 1,
+				"parent" : 50
+			},
+			{
+				"command" : 12,
+				"file" : 10,
+				"line" : 1387,
+				"parent" : 51
+			},
+			{
+				"command" : 14,
 				"file" : 10,
 				"line" : 970,
 				"parent" : 23
@@ -353,51 +370,10 @@
 				"command" : 12,
 				"file" : 10,
 				"line" : 3083,
-				"parent" : 50
-			},
-			{
-				"file" : 1,
-				"line" : -1,
-				"parent" : 0
-			},
-			{
-				"command" : 18,
-				"file" : 18,
-				"line" : 1,
-				"parent" : 52
-			},
-			{
-				"command" : 17,
-				"file" : 0,
-				"line" : 879,
 				"parent" : 53
 			},
 			{
-				"command" : 16,
-				"file" : 0,
-				"line" : 801,
-				"parent" : 54
-			},
-			{
-				"command" : 15,
-				"file" : 0,
-				"line" : 801,
-				"parent" : 55
-			},
-			{
 				"command" : 14,
-				"file" : 10,
-				"line" : 4777,
-				"parent" : 56
-			},
-			{
-				"command" : 12,
-				"file" : 10,
-				"line" : 4552,
-				"parent" : 57
-			},
-			{
-				"command" : 13,
 				"file" : 10,
 				"line" : 976,
 				"parent" : 23
@@ -406,18 +382,42 @@
 				"command" : 12,
 				"file" : 10,
 				"line" : 3083,
-				"parent" : 59
+				"parent" : 55
 			},
 			{
 				"command" : 19,
 				"file" : 19,
 				"line" : 1,
-				"parent" : 52
+				"parent" : 50
+			},
+			{
+				"command" : 18,
+				"file" : 0,
+				"line" : 879,
+				"parent" : 57
+			},
+			{
+				"command" : 17,
+				"file" : 0,
+				"line" : 801,
+				"parent" : 58
+			},
+			{
+				"command" : 16,
+				"file" : 0,
+				"line" : 801,
+				"parent" : 59
+			},
+			{
+				"command" : 15,
+				"file" : 10,
+				"line" : 4777,
+				"parent" : 60
 			},
 			{
 				"command" : 12,
 				"file" : 10,
-				"line" : 1387,
+				"line" : 4552,
 				"parent" : 61
 			},
 			{
@@ -640,7 +640,7 @@
 				"command" : 30,
 				"file" : 0,
 				"line" : 873,
-				"parent" : 53
+				"parent" : 57
 			},
 			{
 				"command" : 22,
@@ -662,11 +662,11 @@
 			"defines" : 
 			[
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "MINGW_HAS_SECURE_API=1"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "QT_CORE_LIB"
 				},
 				{
@@ -694,27 +694,31 @@
 					"define" : "QT_QUICK_LIB"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 5,
+					"define" : "QT_SQL_LIB"
+				},
+				{
+					"backtrace" : 42,
 					"define" : "UNICODE"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "WIN32"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "WIN64"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "_ENABLE_EXTENDED_ALIGNED_STORAGE"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "_UNICODE"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "_WIN64"
 				}
 			],
@@ -772,6 +776,11 @@
 					"backtrace" : 5,
 					"isSystem" : true,
 					"path" : "C:/Qt/6.10.2/mingw_64/include/QtOpenGL"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.10.2/mingw_64/include/QtSql"
 				}
 			],
 			"language" : "CXX",
@@ -807,11 +816,11 @@
 			"defines" : 
 			[
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "MINGW_HAS_SECURE_API=1"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "QT_CORE_LIB"
 				},
 				{
@@ -839,27 +848,31 @@
 					"define" : "QT_QUICK_LIB"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 5,
+					"define" : "QT_SQL_LIB"
+				},
+				{
+					"backtrace" : 42,
 					"define" : "UNICODE"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "WIN32"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "WIN64"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "_ENABLE_EXTENDED_ALIGNED_STORAGE"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "_UNICODE"
 				},
 				{
-					"backtrace" : 39,
+					"backtrace" : 42,
 					"define" : "_WIN64"
 				}
 			],
@@ -917,6 +930,11 @@
 					"backtrace" : 5,
 					"isSystem" : true,
 					"path" : "C:/Qt/6.10.2/mingw_64/include/QtOpenGL"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.10.2/mingw_64/include/QtSql"
 				}
 			],
 			"language" : "CXX",
@@ -929,27 +947,27 @@
 	"dependencies" : 
 	[
 		{
-			"backtrace" : 51,
+			"backtrace" : 0,
+			"id" : "appKiosk_autogen::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 52,
+			"id" : "generate_qmlls_build_ini_file::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 54,
 			"id" : "appKiosk_copy_qml::@6890427a1f51a3e7e1df"
 		},
 		{
-			"backtrace" : 58,
-			"id" : "appKiosk_qmlimportscan::@6890427a1f51a3e7e1df"
-		},
-		{
-			"backtrace" : 60,
+			"backtrace" : 56,
 			"id" : "appKiosk_copy_res::@6890427a1f51a3e7e1df"
 		},
 		{
 			"backtrace" : 62,
-			"id" : "generate_qmlls_build_ini_file::@6890427a1f51a3e7e1df"
+			"id" : "appKiosk_qmlimportscan::@6890427a1f51a3e7e1df"
 		},
 		{
 			"id" : "appKiosk_autogen_timestamp_deps::@6890427a1f51a3e7e1df"
-		},
-		{
-			"backtrace" : 0,
-			"id" : "appKiosk_autogen::@6890427a1f51a3e7e1df"
 		}
 	],
 	"id" : "appKiosk::@6890427a1f51a3e7e1df",
@@ -968,6 +986,11 @@
 			{
 				"backtrace" : 5,
 				"fragment" : "C:\\Qt\\6.10.2\\mingw_64\\lib\\libQt6Quick.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "C:\\Qt\\6.10.2\\mingw_64\\lib\\libQt6Sql.a",
 				"role" : "libraries"
 			},
 			{
@@ -1021,23 +1044,23 @@
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 39,
+				"backtrace" : 41,
+				"fragment" : "-lshell32",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 42,
 				"fragment" : "C:\\Qt\\6.10.2\\mingw_64\\lib\\libQt6Core.a",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 46,
+				"backtrace" : 49,
 				"fragment" : "-lmpr",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 46,
-				"fragment" : "-luserenv",
-				"role" : "libraries"
-			},
-			{
 				"backtrace" : 49,
-				"fragment" : "-lshell32",
+				"fragment" : "-luserenv",
 				"role" : "libraries"
 			},
 			{
@@ -1083,7 +1106,8 @@
 				48,
 				49,
 				50,
-				51
+				51,
+				52
 			]
 		},
 		{
@@ -1423,7 +1447,7 @@
 			"sourceGroupIndex" : 4
 		},
 		{
-			"backtrace" : 39,
+			"backtrace" : 42,
 			"path" : "C:/Qt/6.10.2/mingw_64/metatypes/qt6core_metatypes.json",
 			"sourceGroupIndex" : 0
 		},
@@ -1450,6 +1474,11 @@
 		{
 			"backtrace" : 5,
 			"path" : "C:/Qt/6.10.2/mingw_64/metatypes/qt6opengl_metatypes.json",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 5,
+			"path" : "C:/Qt/6.10.2/mingw_64/metatypes/qt6sql_metatypes.json",
 			"sourceGroupIndex" : 0
 		}
 	],

@@ -7,10 +7,10 @@
                     "entries": [
                         {
                             "codegenResult": 0,
-                            "column": 21,
-                            "durationMicroseconds": 2000,
-                            "functionName": "p",
-                            "line": 9,
+                            "column": 27,
+                            "durationMicroseconds": 0,
+                            "functionName": "product",
+                            "line": 10,
                             "message": ""
                         },
                         {
@@ -18,7 +18,7 @@
                             "column": 27,
                             "durationMicroseconds": 0,
                             "functionName": "centerIn",
-                            "line": 13,
+                            "line": 14,
                             "message": ""
                         },
                         {
@@ -26,7 +26,7 @@
                             "column": 34,
                             "durationMicroseconds": 0,
                             "functionName": "horizontalAlignment",
-                            "line": 20,
+                            "line": 23,
                             "message": ""
                         },
                         {
@@ -34,23 +34,23 @@
                             "column": 20,
                             "durationMicroseconds": 0,
                             "functionName": "width",
-                            "line": 21,
+                            "line": 24,
                             "message": ""
                         },
                         {
-                            "codegenResult": 0,
+                            "codegenResult": 2,
                             "column": 19,
-                            "durationMicroseconds": 0,
+                            "durationMicroseconds": 1000,
                             "functionName": "text",
-                            "line": 25,
-                            "message": ""
+                            "line": 28,
+                            "message": "Cannot access value for name product"
                         },
                         {
                             "codegenResult": 0,
                             "column": 34,
                             "durationMicroseconds": 0,
                             "functionName": "horizontalAlignment",
-                            "line": 27,
+                            "line": 31,
                             "message": ""
                         },
                         {
@@ -58,7 +58,7 @@
                             "column": 20,
                             "durationMicroseconds": 0,
                             "functionName": "width",
-                            "line": 28,
+                            "line": 32,
                             "message": ""
                         },
                         {
@@ -66,7 +66,7 @@
                             "column": 20,
                             "durationMicroseconds": 0,
                             "functionName": "width",
-                            "line": 33,
+                            "line": 36,
                             "message": ""
                         },
                         {
@@ -74,7 +74,7 @@
                             "column": 31,
                             "durationMicroseconds": 0,
                             "functionName": "fill",
-                            "line": 39,
+                            "line": 44,
                             "message": ""
                         },
                         {
@@ -82,7 +82,7 @@
                             "column": 29,
                             "durationMicroseconds": 0,
                             "functionName": "height",
-                            "line": 46,
+                            "line": 50,
                             "message": ""
                         },
                         {
@@ -90,7 +90,7 @@
                             "column": 35,
                             "durationMicroseconds": 0,
                             "functionName": "fillMode",
-                            "line": 53,
+                            "line": 59,
                             "message": ""
                         },
                         {
@@ -98,15 +98,15 @@
                             "column": 33,
                             "durationMicroseconds": 0,
                             "functionName": "source",
-                            "line": 54,
-                            "message": "Cannot access value for name p"
+                            "line": 62,
+                            "message": "Cannot access value for name product"
                         },
                         {
                             "codegenResult": 0,
                             "column": 39,
                             "durationMicroseconds": 0,
                             "functionName": "fill",
-                            "line": 52,
+                            "line": 58,
                             "message": ""
                         },
                         {
@@ -114,15 +114,15 @@
                             "column": 34,
                             "durationMicroseconds": 0,
                             "functionName": "visible",
-                            "line": 61,
-                            "message": "Cannot access value for name p"
+                            "line": 72,
+                            "message": "Cannot access value for name product"
                         },
                         {
                             "codegenResult": 0,
                             "column": 43,
                             "durationMicroseconds": 0,
                             "functionName": "centerIn",
-                            "line": 60,
+                            "line": 71,
                             "message": ""
                         },
                         {
@@ -130,7 +130,7 @@
                             "column": 28,
                             "durationMicroseconds": 0,
                             "functionName": "width",
-                            "line": 69,
+                            "line": 80,
                             "message": ""
                         },
                         {
@@ -138,7 +138,7 @@
                             "column": 45,
                             "durationMicroseconds": 0,
                             "functionName": "verticalCenter",
-                            "line": 71,
+                            "line": 82,
                             "message": ""
                         },
                         {
@@ -146,15 +146,15 @@
                             "column": 31,
                             "durationMicroseconds": 0,
                             "functionName": "text",
-                            "line": 74,
-                            "message": "Cannot access value for name p"
+                            "line": 85,
+                            "message": "Cannot access value for name product"
                         },
                         {
                             "codegenResult": 0,
                             "column": 35,
                             "durationMicroseconds": 0,
                             "functionName": "wrapMode",
-                            "line": 76,
+                            "line": 91,
                             "message": ""
                         },
                         {
@@ -162,7 +162,7 @@
                             "column": 32,
                             "durationMicroseconds": 0,
                             "functionName": "width",
-                            "line": 77,
+                            "line": 92,
                             "message": ""
                         },
                         {
@@ -170,31 +170,31 @@
                             "column": 31,
                             "durationMicroseconds": 0,
                             "functionName": "text",
-                            "line": 81,
-                            "message": "Cannot access value for name p"
+                            "line": 96,
+                            "message": "Cannot access value for name product"
                         },
                         {
                             "codegenResult": 0,
                             "column": 32,
                             "durationMicroseconds": 0,
                             "functionName": "width",
-                            "line": 83,
+                            "line": 99,
                             "message": ""
                         },
                         {
-                            "codegenResult": 0,
+                            "codegenResult": 2,
                             "column": 31,
                             "durationMicroseconds": 0,
                             "functionName": "text",
-                            "line": 87,
-                            "message": ""
+                            "line": 103,
+                            "message": "Cannot access value for name product"
                         },
                         {
                             "codegenResult": 0,
                             "column": 32,
                             "durationMicroseconds": 0,
                             "functionName": "width",
-                            "line": 89,
+                            "line": 106,
                             "message": ""
                         },
                         {
@@ -202,7 +202,15 @@
                             "column": 20,
                             "durationMicroseconds": 0,
                             "functionName": "width",
-                            "line": 97,
+                            "line": 113,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "onClicked",
+                            "line": 118,
                             "message": ""
                         },
                         {
@@ -210,24 +218,56 @@
                             "column": 28,
                             "durationMicroseconds": 0,
                             "functionName": "onClicked",
-                            "line": 102,
-                            "message": "Could not find signal \"clicked\"."
+                            "line": 142,
+                            "message": "Cannot access value for name inventoryManager"
                         },
                         {
                             "codegenResult": 2,
-                            "column": 26,
+                            "column": 27,
                             "durationMicroseconds": 0,
-                            "functionName": "enabled",
-                            "line": 109,
-                            "message": "Could not find property \"enabled\"."
+                            "functionName": "text",
+                            "line": 135,
+                            "message": "Cannot load property text from (component in C:/Users/mirac/Documents/Kiosk/screens/ConfirmScreen.qml)::parent with type QQuickItem."
                         },
                         {
                             "codegenResult": 2,
-                            "column": 28,
+                            "column": 27,
                             "durationMicroseconds": 0,
-                            "functionName": "onClicked",
-                            "line": 110,
-                            "message": "Could not find signal \"clicked\"."
+                            "functionName": "font",
+                            "line": 137,
+                            "message": "Cannot load property font from (component in C:/Users/mirac/Documents/Kiosk/screens/ConfirmScreen.qml)::parent with type QQuickItem."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 42,
+                            "durationMicroseconds": 0,
+                            "functionName": "horizontalAlignment",
+                            "line": 138,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 40,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalAlignment",
+                            "line": 139,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 21,
+                            "durationMicroseconds": 0,
+                            "functionName": "target",
+                            "line": 154,
+                            "message": "Cannot access value for name inventoryManager"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 13,
+                            "durationMicroseconds": 0,
+                            "functionName": "onErrorOccurred",
+                            "line": 155,
+                            "message": "Functions without type annotations won't be compiled"
                         }
                     ],
                     "filePath": "C:/Users/mirac/Documents/Kiosk/screens/ConfirmScreen.qml"

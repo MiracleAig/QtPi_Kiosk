@@ -6,27 +6,67 @@
                 {
                     "entries": [
                         {
-                            "codegenResult": 2,
+                            "codegenResult": 0,
+                            "column": 21,
+                            "durationMicroseconds": 0,
+                            "functionName": "theme",
+                            "line": 14,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 22,
+                            "durationMicroseconds": 0,
+                            "functionName": "accent",
+                            "line": 15,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 23,
+                            "durationMicroseconds": 0,
+                            "functionName": "primary",
+                            "line": 16,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
                             "column": 23,
                             "durationMicroseconds": 0,
                             "functionName": "fill",
-                            "line": 16,
-                            "message": "Could not find property \"fill\"."
+                            "line": 22,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 23,
+                            "durationMicroseconds": 0,
+                            "functionName": "fill",
+                            "line": 31,
+                            "message": ""
                         },
                         {
                             "codegenResult": 2,
                             "column": 26,
                             "durationMicroseconds": 0,
                             "functionName": "onGoConfirm",
-                            "line": 19,
-                            "message": "Cannot access value for name nav"
+                            "line": 34,
+                            "message": "Cannot generate efficient code for call to untyped JavaScript function"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onGoConfirm",
+                            "line": 34,
+                            "message": ""
                         },
                         {
                             "codegenResult": 2,
                             "column": 24,
                             "durationMicroseconds": 0,
                             "functionName": "onGoSaved",
-                            "line": 26,
+                            "line": 43,
                             "message": "Cannot access value for name nav"
                         },
                         {
@@ -34,15 +74,23 @@
                             "column": 23,
                             "durationMicroseconds": 0,
                             "functionName": "onGoBack",
-                            "line": 27,
+                            "line": 44,
                             "message": "Cannot access value for name nav"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "onCompleted",
+                            "line": 48,
+                            "message": "Cannot access value for name inventoryManager"
                         },
                         {
                             "codegenResult": 2,
                             "column": 21,
                             "durationMicroseconds": 0,
                             "functionName": "onDone",
-                            "line": 34,
+                            "line": 55,
                             "message": "Cannot access value for name nav"
                         }
                     ],

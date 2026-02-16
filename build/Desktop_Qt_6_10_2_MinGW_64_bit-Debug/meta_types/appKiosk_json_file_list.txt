@@ -1,1 +1,2 @@
+C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/appKiosk_autogen/include/../EWIEGA46WW/moc_inventorymanager.cpp.json
 C:/Users/mirac/Documents/Kiosk/build/Desktop_Qt_6_10_2_MinGW_64_bit-Debug/appKiosk_autogen/include/../EWIEGA46WW/moc_productlookup.cpp.json
