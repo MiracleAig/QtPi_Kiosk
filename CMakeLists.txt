@@ -12,6 +12,8 @@ qt_add_executable(appKiosk
     main.cpp
     productlookup.cpp
     productlookup.h
+    webuiserver.cpp
+    webuiserver.h
 )
 
 set_source_files_properties(AppState.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)

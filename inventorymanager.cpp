@@ -14,6 +14,16 @@
 #include <QNetworkReply>
 #include <QEventLoop>
 #include <QUrl>
+#include <QStringList>
+
+namespace {
+QString csvEscape(const QString &value)
+{
+    QString escaped = value;
+    escaped.replace('"', "\"\"");
+    return '"' + escaped + '"';
+}
+}
 
 InventoryManager::InventoryManager(QObject *parent) : QObject(parent)
 {
@@ -172,6 +182,31 @@ QVariantList InventoryManager::loadInventory(int limit)
         out.append(row);
     }
     return out;
+}
+
+QString InventoryManager::exportInventoryCsv()
+{
+    const QVariantList rows = loadInventory(0);
+
+    QStringList lines;
+    lines << "id,barcode,name,brand,size,image,created_at";
+
+    for (const QVariant &item : rows) {
+        const QVariantMap row = item.toMap();
+
+        QStringList cols;
+        cols << csvEscape(row.value("id").toString())
+             << csvEscape(row.value("barcode").toString())
+             << csvEscape(row.value("name").toString())
+             << csvEscape(row.value("brand").toString())
+             << csvEscape(row.value("size").toString())
+             << csvEscape(row.value("image").toString())
+             << csvEscape(row.value("created_at").toString());
+
+        lines << cols.join(',');
+    }
+
+    return lines.join("\n") + "\n";
 }
 
 // --------------------
