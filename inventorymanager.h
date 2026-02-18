@@ -13,6 +13,7 @@ public:
 
     Q_INVOKABLE bool insertProduct(const QVariantMap &product);
     Q_INVOKABLE QVariantList loadInventory(int limit = 0);
+    Q_INVOKABLE QString exportInventoryCsv();
 
     // OFFLINE-FIRST CACHE
     Q_INVOKABLE QVariantMap findCachedProduct(const QString &barcode);
