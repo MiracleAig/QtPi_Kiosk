@@ -16,6 +16,8 @@ public:
     bool start(const QHostAddress &address = QHostAddress::Any, quint16 port = 8080);
 
 private:
+    bool isAuthorized(const QByteArray &request, const QByteArray &path) const;
+    QByteArray unauthorizedBody() const;
     void handleConnection();
     void respond(QTcpSocket *socket, int statusCode, const QByteArray &statusText,
                  const QByteArray &contentType, const QByteArray &body,
@@ -23,4 +25,5 @@ private:
 
     InventoryManager *m_inventoryManager;
     QTcpServer m_server;
+    QByteArray m_authToken;
 };
