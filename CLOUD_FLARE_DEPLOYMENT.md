@@ -1,11 +1,23 @@
-# Cloudflare remote access setup (QtPi Kiosk)
+# Cloudflare Tunnel setup for remote access (QtPi Kiosk on Raspberry Pi)
 
-If you want to access the kiosk web UI from outside your home network, **do not expose port 8080 directly**.
-Use a Cloudflare Tunnel and protect it with an access token.
+Use this guide to access your kiosk web UI securely from anywhere.
 
-## 1) App configuration
+> ✅ Goal: reach `https://kiosk.yourdomain.com` and have it forward to your Pi app at `http://127.0.0.1:8080`.
 
-### Linux / Raspberry Pi
+> ⚠️ Important: do **not** expose port `8080` directly on your router.
+
+## Prerequisites
+
+- A Cloudflare account.
+- A domain managed by Cloudflare DNS (or a subdomain delegated to Cloudflare).
+- Your kiosk app running on the Pi.
+- SSH access to the Pi.
+
+---
+
+## 1) Run the kiosk web UI locally only (on the Pi)
+
+Set these environment variables before launching the app:
 
 ```bash
 export KIOSK_WEBUI_BIND=127.0.0.1
@@ -14,68 +26,90 @@ export KIOSK_WEBUI_TOKEN='replace-with-a-long-random-token'
 ./appKiosk
 ```
 
-### Windows (PowerShell) - debugging friendly
+What this does:
 
-```powershell
-$env:KIOSK_WEBUI_BIND = '127.0.0.1'
-$env:KIOSK_WEBUI_PORT = '8080'
-$env:KIOSK_WEBUI_TOKEN = 'replace-with-a-long-random-token'
-.\build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\appKiosk.exe
-```
+- `KIOSK_WEBUI_BIND=127.0.0.1` keeps your app local-only on the Pi.
+- `KIOSK_WEBUI_TOKEN` protects `/`, `/export.csv`, and `/api/inventory.json`.
 
-### Windows (CMD)
+Token can be sent either by:
 
-```cmd
-set KIOSK_WEBUI_BIND=127.0.0.1
-set KIOSK_WEBUI_PORT=8080
-set KIOSK_WEBUI_TOKEN=replace-with-a-long-random-token
-build\Desktop_Qt_6_10_2_MinGW_64_bit-Debug\appKiosk.exe
-```
-
-- `KIOSK_WEBUI_BIND=127.0.0.1` keeps the web UI local-only.
-- `KIOSK_WEBUI_TOKEN` enables bearer-token protection for `/`, `/export.csv`, and `/api/inventory.json`.
-
-Requests must include one of:
 - `Authorization: Bearer <token>` header, or
 - `?token=<token>` query parameter.
 
-## 2) Debug quickly on Windows before Cloudflare
+Quick local check from the Pi:
 
-PowerShell checks:
+```bash
+# Expect 401 without token
+curl -i http://127.0.0.1:8080/api/inventory.json
 
-```powershell
-# Should return 401 when token is required
-Invoke-WebRequest -Uri "http://127.0.0.1:8080/api/inventory.json" -UseBasicParsing
-
-# Should return 200 with token in URL
-Invoke-WebRequest -Uri "http://127.0.0.1:8080/api/inventory.json?token=$env:KIOSK_WEBUI_TOKEN" -UseBasicParsing
-
-# Should return 200 with bearer token header
-Invoke-WebRequest -Uri "http://127.0.0.1:8080/api/inventory.json" -Headers @{ Authorization = "Bearer $env:KIOSK_WEBUI_TOKEN" } -UseBasicParsing
+# Expect 200 with token
+curl -i "http://127.0.0.1:8080/api/inventory.json?token=$KIOSK_WEBUI_TOKEN"
 ```
 
-## 3) Cloudflare Tunnel
+---
 
-Install and authenticate `cloudflared`, then create a tunnel to local port 8080:
+## 2) Install `cloudflared` on Raspberry Pi
+
+Install from Cloudflare’s repository (Debian/Raspberry Pi OS):
+
+```bash
+# Add Cloudflare package signing key
+sudo mkdir -p --mode=0755 /usr/share/keyrings
+curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg \
+  | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+
+# Add repo
+echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main' \
+  | sudo tee /etc/apt/sources.list.d/cloudflared.list
+
+# Install
+sudo apt update
+sudo apt install -y cloudflared
+```
+
+Confirm install:
+
+```bash
+cloudflared --version
+```
+
+---
+
+## 3) Authenticate cloudflared with Cloudflare
+
+Run login once on the Pi:
 
 ```bash
 cloudflared tunnel login
+```
+
+- A URL appears in the terminal.
+- Open it in your browser, sign in to Cloudflare, and authorize your domain.
+- A cert file is saved under `~/.cloudflared/`.
+
+---
+
+## 4) Create and wire the tunnel
+
+Create a named tunnel:
+
+```bash
 cloudflared tunnel create qtpikiosk
+```
+
+Map DNS hostname to the tunnel:
+
+```bash
 cloudflared tunnel route dns qtpikiosk kiosk.yourdomain.com
 ```
 
-Windows config example (`%USERPROFILE%\\.cloudflared\\config.yml`):
+This creates a DNS CNAME in Cloudflare automatically.
 
-```yaml
-tunnel: qtpikiosk
-credentials-file: C:\\Users\\<you>\\.cloudflared\\<tunnel-id>.json
-ingress:
-  - hostname: kiosk.yourdomain.com
-    service: http://127.0.0.1:8080
-  - service: http_status:404
-```
+---
 
-Linux config example (`~/.cloudflared/config.yml`):
+## 5) Create tunnel config on the Pi
+
+Create `~/.cloudflared/config.yml`:
 
 ```yaml
 tunnel: qtpikiosk
@@ -86,20 +120,101 @@ ingress:
   - service: http_status:404
 ```
 
-Then run:
+Replace:
+
+- `kiosk.yourdomain.com` with your real hostname.
+- `<tunnel-id>` with the JSON file name created by `cloudflared tunnel create`.
+- `/home/pi` if your username is not `pi`.
+
+Validate config:
+
+```bash
+cloudflared tunnel ingress validate
+```
+
+---
+
+## 6) Run tunnel and test remote access
+
+Start tunnel manually first:
 
 ```bash
 cloudflared tunnel run qtpikiosk
 ```
 
-## 4) Recommended hardening
+Now test from a device not on your home network:
 
-- In Cloudflare Zero Trust, create an access policy so only your user/email can reach the hostname.
-- Keep `KIOSK_WEBUI_TOKEN` secret and rotate it if shared.
-- Avoid exposing the tunnel to public unauthenticated traffic.
+- `https://kiosk.yourdomain.com/`
+- `https://kiosk.yourdomain.com/api/inventory.json`
+- `https://kiosk.yourdomain.com/export.csv`
 
-## 5) Useful URLs
+If you get `401`, add your token:
 
-- Landing page: `https://kiosk.yourdomain.com/`
-- CSV export: `https://kiosk.yourdomain.com/export.csv`
-- JSON view: `https://kiosk.yourdomain.com/api/inventory.json`
+- `https://kiosk.yourdomain.com/?token=YOUR_TOKEN`
+
+---
+
+## 7) Make the tunnel auto-start (systemd)
+
+Install and enable the service:
+
+```bash
+sudo cloudflared service install
+sudo systemctl enable cloudflared
+sudo systemctl restart cloudflared
+sudo systemctl status cloudflared --no-pager
+```
+
+View logs if needed:
+
+```bash
+journalctl -u cloudflared -f
+```
+
+---
+
+## 8) Recommended security hardening (strongly recommended)
+
+1. **Enable Cloudflare Zero Trust Access** for `kiosk.yourdomain.com`.
+   - Example policy: allow only your email(s).
+2. Keep `KIOSK_WEBUI_TOKEN` secret and rotate it if shared.
+3. Keep the app bound to `127.0.0.1`.
+4. Do not open router/NAT ports for the kiosk.
+
+---
+
+## Troubleshooting
+
+### Tunnel says offline
+
+```bash
+cloudflared tunnel list
+cloudflared tunnel info qtpikiosk
+```
+
+Check the service and logs:
+
+```bash
+sudo systemctl status cloudflared --no-pager
+journalctl -u cloudflared -n 100 --no-pager
+```
+
+### Hostname does not resolve
+
+Confirm DNS route command was run:
+
+```bash
+cloudflared tunnel route dns qtpikiosk kiosk.yourdomain.com
+```
+
+### App works locally but not through tunnel
+
+- Verify kiosk app is running on the Pi.
+- Verify app is listening on `127.0.0.1:8080`.
+- Verify `config.yml` ingress `service` points to `http://127.0.0.1:8080`.
+
+---
+
+## Optional: use only Cloudflare Access (no URL token)
+
+If you fully trust Cloudflare Access policy, you can remove `KIOSK_WEBUI_TOKEN` from app startup and enforce auth at Cloudflare only. For defense in depth, keeping both is better.
