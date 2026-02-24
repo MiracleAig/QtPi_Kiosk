@@ -1,4 +1,4 @@
-# Cloudflare Tunnel setup for remote access (QtPi Kiosk on Raspberry Pi)
+# Cloudflare Tunnel setup for remote access (QtPi Kiosk on Raspberry Pi / Linux)
 
 Use this guide to access the website served by your Qt kiosk app securely from anywhere.
 
@@ -10,12 +10,12 @@ Use this guide to access the website served by your Qt kiosk app securely from a
 
 - A Cloudflare account.
 - A domain managed by Cloudflare DNS (or a subdomain delegated to Cloudflare).
-- Your kiosk app running on the Pi.
-- SSH access to the Pi.
+- Your kiosk app running on the Pi/Linux host.
+- SSH access to the Pi/Linux host.
 
 ---
 
-## 1) Run your Qt app and keep its hosted website local-only on the Pi
+## 1) Run your Qt app and keep its hosted website local-only on Linux
 
 Set these environment variables before launching the app:
 
@@ -38,9 +38,12 @@ Token can be sent either by:
 - `Authorization: Bearer <token>` header, or
 - `?token=<token>` query parameter.
 
-Quick local check from the Pi:
+Linux checks (run on the Pi):
 
 ```bash
+# Confirm app is listening locally on 127.0.0.1:8080
+ss -ltnp | rg 8080
+
 # Expect 401 without token
 curl -i http://127.0.0.1:8080/api/inventory.json
 
@@ -50,9 +53,9 @@ curl -i "http://127.0.0.1:8080/api/inventory.json?token=$KIOSK_WEBUI_TOKEN"
 
 ---
 
-## 2) Install `cloudflared` on Raspberry Pi
+## 2) Install `cloudflared` on Raspberry Pi / Debian Linux
 
-Install from Cloudflare’s repository (Debian/Raspberry Pi OS):
+Install from Cloudflare’s apt repository:
 
 ```bash
 # Add Cloudflare package signing key
@@ -60,7 +63,7 @@ sudo mkdir -p --mode=0755 /usr/share/keyrings
 curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg \
   | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
 
-# Add repo
+# Add repo (bookworm example)
 echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main' \
   | sudo tee /etc/apt/sources.list.d/cloudflared.list
 
@@ -73,13 +76,14 @@ Confirm install:
 
 ```bash
 cloudflared --version
+which cloudflared
 ```
 
 ---
 
 ## 3) Authenticate cloudflared with Cloudflare
 
-Run login once on the Pi:
+Run login once on Linux host:
 
 ```bash
 cloudflared tunnel login
@@ -109,7 +113,7 @@ This creates a DNS CNAME in Cloudflare automatically.
 
 ---
 
-## 5) Create tunnel config on the Pi
+## 5) Create tunnel config on Linux
 
 Create `~/.cloudflared/config.yml`:
 
@@ -154,9 +158,15 @@ If you get `401`, add your token:
 
 - `https://kiosk.yourdomain.com/?token=YOUR_TOKEN`
 
+From Linux, monitor connections/logs while testing remotely:
+
+```bash
+journalctl -u cloudflared -f
+```
+
 ---
 
-## 7) Make the tunnel auto-start (systemd)
+## 7) Make the tunnel auto-start (systemd on Linux)
 
 Install and enable the service:
 
@@ -167,10 +177,11 @@ sudo systemctl restart cloudflared
 sudo systemctl status cloudflared --no-pager
 ```
 
-View logs if needed:
+At boot verification:
 
 ```bash
-journalctl -u cloudflared -f
+systemctl is-enabled cloudflared
+systemctl is-active cloudflared
 ```
 
 ---
@@ -185,7 +196,7 @@ journalctl -u cloudflared -f
 
 ---
 
-## Troubleshooting
+## Troubleshooting (Linux)
 
 ### Tunnel says offline
 
@@ -209,11 +220,25 @@ Confirm DNS route command was run:
 cloudflared tunnel route dns qtpikiosk kiosk.yourdomain.com
 ```
 
+Then verify DNS resolution from any shell:
+
+```bash
+dig +short kiosk.yourdomain.com
+```
+
 ### Qt app works on the Pi, but website is not reachable through tunnel
 
 - Verify kiosk app is running on the Pi.
 - Verify app is listening on `127.0.0.1:8080`.
 - Verify `config.yml` ingress `service` points to `http://127.0.0.1:8080`.
+
+Helpful Linux checks:
+
+```bash
+ss -ltnp | rg 8080
+curl -i http://127.0.0.1:8080/
+curl -i "http://127.0.0.1:8080/?token=$KIOSK_WEBUI_TOKEN"
+```
 
 ---
 
