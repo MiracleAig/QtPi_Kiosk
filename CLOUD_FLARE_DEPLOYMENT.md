@@ -1,6 +1,6 @@
 # Cloudflare Tunnel setup for remote access (QtPi Kiosk on Raspberry Pi)
 
-Use this guide to access your kiosk web UI securely from anywhere.
+Use this guide to access the website served by your Qt kiosk app securely from anywhere.
 
 > ✅ Goal: reach `https://kiosk.yourdomain.com` and have it forward to your Pi app at `http://127.0.0.1:8080`.
 
@@ -15,7 +15,7 @@ Use this guide to access your kiosk web UI securely from anywhere.
 
 ---
 
-## 1) Run the kiosk web UI locally only (on the Pi)
+## 1) Run your Qt app and keep its hosted website local-only on the Pi
 
 Set these environment variables before launching the app:
 
@@ -28,7 +28,9 @@ export KIOSK_WEBUI_TOKEN='replace-with-a-long-random-token'
 
 What this does:
 
-- `KIOSK_WEBUI_BIND=127.0.0.1` keeps your app local-only on the Pi.
+- Your **Qt app remains the primary UI** running on the Pi display.
+- The app also hosts a website/API on port `8080` for remote access.
+- `KIOSK_WEBUI_BIND=127.0.0.1` keeps that hosted website local-only until Cloudflare Tunnel forwards traffic to it.
 - `KIOSK_WEBUI_TOKEN` protects `/`, `/export.csv`, and `/api/inventory.json`.
 
 Token can be sent either by:
@@ -142,7 +144,7 @@ Start tunnel manually first:
 cloudflared tunnel run qtpikiosk
 ```
 
-Now test from a device not on your home network:
+Now test from any external device (phone/laptop on cellular or another network):
 
 - `https://kiosk.yourdomain.com/`
 - `https://kiosk.yourdomain.com/api/inventory.json`
@@ -179,7 +181,7 @@ journalctl -u cloudflared -f
    - Example policy: allow only your email(s).
 2. Keep `KIOSK_WEBUI_TOKEN` secret and rotate it if shared.
 3. Keep the app bound to `127.0.0.1`.
-4. Do not open router/NAT ports for the kiosk.
+4. Do not open router/NAT ports for the app-hosted website.
 
 ---
 
@@ -207,7 +209,7 @@ Confirm DNS route command was run:
 cloudflared tunnel route dns qtpikiosk kiosk.yourdomain.com
 ```
 
-### App works locally but not through tunnel
+### Qt app works on the Pi, but website is not reachable through tunnel
 
 - Verify kiosk app is running on the Pi.
 - Verify app is listening on `127.0.0.1:8080`.
