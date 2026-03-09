@@ -304,12 +304,12 @@
       const barcode = item.barcode || item.code || '-';
       const size = item.size || item.quantity || '-';
 
-      const calories = item.calories ?? item.energy_kcal ?? '-';
-      const protein = item.protein ?? '-';
-      const carbs = item.carbs ?? item.carbohydrates ?? '-';
-      const fat = item.fat ?? '-';
-      const sugar = item.sugar ?? '-';
-      const sodium = item.sodium ?? '-';
+      const calories = getNutritionValue(item, ['calories', 'energy_kcal', 'energy-kcal_100g', 'energy-kcal']);
+      const protein = getNutritionValue(item, ['protein', 'proteins', 'proteins_100g', 'protein_100g']);
+      const carbs = getNutritionValue(item, ['carbs', 'carbohydrates', 'carbohydrates_100g', 'carbs_100g']);
+      const fat = getNutritionValue(item, ['fat', 'fat_100g']);
+      const sugar = getNutritionValue(item, ['sugar', 'sugars', 'sugars_100g', 'sugar_100g']);
+      const sodium = getNutritionValue(item, ['sodium', 'sodium_100g', 'salt', 'salt_100g']);
 
       document.getElementById('detailsContent').innerHTML = `
         <img src="${escapeAttr(image || 'https://via.placeholder.com/260x260?text=No+Image')}" alt="Food image"
@@ -386,6 +386,21 @@
           'Could not add food. You still need to add the add endpoint in Qt.';
       }
     });
+
+    function getNutritionValue(item, keys) {
+      const nutriments = item && typeof item.nutriments === 'object' ? item.nutriments : null;
+
+      for (const key of keys) {
+        const direct = item?.[key];
+        if (direct !== undefined && direct !== null && direct !== '') return direct;
+
+        if (nutriments && nutriments[key] !== undefined && nutriments[key] !== null && nutriments[key] !== '') {
+          return nutriments[key];
+        }
+      }
+
+      return '-';
+    }
 
     function escapeHtml(value) {
       return String(value)
