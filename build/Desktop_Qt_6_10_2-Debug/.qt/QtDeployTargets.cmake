@@ -1,0 +1,2 @@
+set(__QT_DEPLOY_TARGET_appKiosk_FILE /home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/appKiosk)
+set(__QT_DEPLOY_TARGET_appKiosk_TYPE EXECUTABLE)

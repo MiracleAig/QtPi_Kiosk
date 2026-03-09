@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/qt/qml/Kiosk/">
+    <file alias="webui.qrc">/home/miracleaigbogun/Documents/Kiosk/webui.qrc</file>
+  </qresource>
+</RCC>
+

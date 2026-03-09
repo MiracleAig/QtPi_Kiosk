@@ -1,0 +1,16 @@
+-rootPath
+/home/miracleaigbogun/Documents/Kiosk
+-cmake-output
+-output-file
+/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.qt/qml_imports/appKiosk_conf.cmake
+-importPath
+/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug
+-importPath
+/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/Kiosk
+-importPath
+/home/miracleaigbogun/Qt/6.10.2/gcc_64/qml
+-qrcFiles
+/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.qt/rcc/qmake_Kiosk.qrc
+/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.qt/rcc/appKiosk_raw_qml_0.qrc
+/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.qt/rcc/appKiosk_raw_qml_0_extra_qmldirs.qrc
+/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.qt/rcc/webui.qrc

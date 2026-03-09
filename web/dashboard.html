@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FridgeSense Dashboard</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #1f2937;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      padding: 18px;
+    }
+
+    .card h2 {
+      margin-top: 0;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    input, button {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: #2563eb;
+      color: white;
+    }
+
+    button.danger {
+      background: #dc2626;
+    }
+
+    button.secondary {
+      background: #6b7280;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f9fafb;
+    }
+
+    tr:hover {
+      background: #f3f4f6;
+      cursor: pointer;
+    }
+
+    .details img {
+      width: 100%;
+      max-width: 260px;
+      border-radius: 12px;
+      display: block;
+      margin-bottom: 16px;
+      background: #eee;
+    }
+
+    .nutrition-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .nutrition-item {
+      background: #f9fafb;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .form-grid input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .muted {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .empty {
+      padding: 20px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    @media (max-width: 950px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FridgeSense Dashboard</h1>
+    <div class="top-actions">
+      <button class="secondary" onclick="refreshInventory()">Refresh</button>
+      <a href="/logout"><button class="danger">Logout</button></a>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="card">
+      <h2>Inventory</h2>
+
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="Search foods..." oninput="renderInventory()" />
+      </div>
+
+      <div id="inventoryTableWrap">
+        <table id="inventoryTable">
+          <thead>
+            <tr>
+              <th>Food</th>
+              <th>Brand</th>
+              <th>Barcode</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryBody"></tbody>
+        </table>
+      </div>
+
+      <div id="emptyState" class="empty" style="display:none;">
+        No foods found.
+      </div>
+    </section>
+
+    <section class="card details">
+      <h2>Food Details</h2>
+
+      <div id="detailsContent">
+        <p class="muted">Select a food item to view details.</p>
+      </div>
+    </section>
+
+    <section class="card" style="grid-column: 1 / -1;">
+      <h2>Add Food</h2>
+      <form id="addFoodForm">
+        <div class="form-grid">
+          <input type="text" id="barcode" placeholder="Barcode" required />
+          <input type="text" id="name" placeholder="Food name" required />
+          <input type="text" id="brand" placeholder="Brand" />
+          <input type="text" id="size" placeholder="Size" />
+          <input type="url" id="image" placeholder="Image URL" class="full" />
+          <input type="number" step="any" id="calories" placeholder="Calories" />
+          <input type="number" step="any" id="protein" placeholder="Protein (g)" />
+          <input type="number" step="any" id="carbs" placeholder="Carbs (g)" />
+          <input type="number" step="any" id="fat" placeholder="Fat (g)" />
+          <input type="number" step="any" id="sugar" placeholder="Sugar (g)" />
+          <input type="number" step="any" id="sodium" placeholder="Sodium (mg)" />
+          <button type="submit" class="full">Add Food</button>
+        </div>
+      </form>
+      <p class="muted" id="formMessage"></p>
+    </section>
+  </div>
+
+  <script>
+    let inventory = [];
+    let selectedItem = null;
+
+    async function refreshInventory() {
+      try {
+        const response = await fetch('/api/inventory.json');
+        if (!response.ok) throw new Error('Failed to load inventory');
+        const data = await response.json();
+
+        inventory = Array.isArray(data.inventory) ? data.inventory : [];
+        renderInventory();
+
+        if (selectedItem) {
+          const updated = inventory.find(item =>
+            String(item.barcode || '') === String(selectedItem.barcode || '')
+          );
+          if (updated) {
+            showDetails(updated);
+          } else {
+            selectedItem = null;
+            document.getElementById('detailsContent').innerHTML =
+              '<p class="muted">Select a food item to view details.</p>';
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('inventoryBody').innerHTML = '';
+        document.getElementById('emptyState').style.display = 'block';
+      }
+    }
+
+    function renderInventory() {
+      const body = document.getElementById('inventoryBody');
+      const emptyState = document.getElementById('emptyState');
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      body.innerHTML = '';
+
+      const filtered = inventory.filter(item => {
+        const name = String(item.name || item.product_name || '').toLowerCase();
+        const brand = String(item.brand || item.brands || '').toLowerCase();
+        const barcode = String(item.barcode || item.code || '').toLowerCase();
+        return name.includes(search) || brand.includes(search) || barcode.includes(search);
+      });
+
+      if (filtered.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.onclick = () => showDetails(item);
+
+        tr.innerHTML = `
+          <td>${escapeHtml(item.name || item.product_name || 'Unknown')}</td>
+          <td>${escapeHtml(item.brand || item.brands || '-')}</td>
+          <td>${escapeHtml(item.barcode || item.code || '-')}</td>
+          <td>
+            <button class="danger" onclick="event.stopPropagation(); deleteFood('${escapeJs(item.barcode || item.code || '')}')">
+              Delete
+            </button>
+          </td>
+        `;
+
+        body.appendChild(tr);
+      });
+    }
+
+    function showDetails(item) {
+      selectedItem = item;
+
+      const image = item.image || item.image_url || '';
+      const name = item.name || item.product_name || 'Unknown';
+      const brand = item.brand || item.brands || '-';
+      const barcode = item.barcode || item.code || '-';
+      const size = item.size || item.quantity || '-';
+
+      const calories = item.calories ?? item.energy_kcal ?? '-';
+      const protein = item.protein ?? '-';
+      const carbs = item.carbs ?? item.carbohydrates ?? '-';
+      const fat = item.fat ?? '-';
+      const sugar = item.sugar ?? '-';
+      const sodium = item.sodium ?? '-';
+
+      document.getElementById('detailsContent').innerHTML = `
+        <img src="${escapeAttr(image || 'https://via.placeholder.com/260x260?text=No+Image')}" alt="Food image"
+             onerror="this.src='https://via.placeholder.com/260x260?text=No+Image'">
+
+        <h3>${escapeHtml(name)}</h3>
+        <p><strong>Brand:</strong> ${escapeHtml(brand)}</p>
+        <p><strong>Barcode:</strong> ${escapeHtml(barcode)}</p>
+        <p><strong>Size:</strong> ${escapeHtml(size)}</p>
+
+        <div class="nutrition-grid">
+          <div class="nutrition-item"><strong>Calories</strong><br>${escapeHtml(String(calories))}</div>
+          <div class="nutrition-item"><strong>Protein</strong><br>${escapeHtml(String(protein))} g</div>
+          <div class="nutrition-item"><strong>Carbs</strong><br>${escapeHtml(String(carbs))} g</div>
+          <div class="nutrition-item"><strong>Fat</strong><br>${escapeHtml(String(fat))} g</div>
+          <div class="nutrition-item"><strong>Sugar</strong><br>${escapeHtml(String(sugar))} g</div>
+          <div class="nutrition-item"><strong>Sodium</strong><br>${escapeHtml(String(sodium))} mg</div>
+        </div>
+      `;
+    }
+
+    async function deleteFood(barcode) {
+      if (!barcode) return;
+      if (!confirm('Delete this food from inventory?')) return;
+
+      try {
+        const response = await fetch(`/api/delete-food`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ barcode })
+        });
+
+        if (!response.ok) throw new Error('Delete failed');
+
+        await refreshInventory();
+      } catch (err) {
+        console.error(err);
+        alert('Could not delete item. You still need to add the delete endpoint in Qt.');
+      }
+    }
+
+    document.getElementById('addFoodForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        barcode: document.getElementById('barcode').value,
+        name: document.getElementById('name').value,
+        brand: document.getElementById('brand').value,
+        size: document.getElementById('size').value,
+        image: document.getElementById('image').value,
+        calories: document.getElementById('calories').value,
+        protein: document.getElementById('protein').value,
+        carbs: document.getElementById('carbs').value,
+        fat: document.getElementById('fat').value,
+        sugar: document.getElementById('sugar').value,
+        sodium: document.getElementById('sodium').value
+      };
+
+      try {
+        const response = await fetch('/api/add-food', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error('Add failed');
+
+        document.getElementById('formMessage').textContent = 'Food added successfully.';
+        document.getElementById('addFoodForm').reset();
+        await refreshInventory();
+      } catch (err) {
+        console.error(err);
+        document.getElementById('formMessage').textContent =
+          'Could not add food. You still need to add the add endpoint in Qt.';
+      }
+    });
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value);
+    }
+
+    function escapeJs(value) {
+      return String(value).replaceAll('\\', '\\\\').replaceAll("'", "\\'");
+    }
+
+    refreshInventory();
+  </script>
+</body>
+</html>

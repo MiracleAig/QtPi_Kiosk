@@ -1,111 +1,262 @@
 #include "webuiserver.h"
-
 #include "inventorymanager.h"
 
+#include <QTcpServer>
 #include <QTcpSocket>
+#include <QFile>
 #include <QDateTime>
 #include <QDebug>
+#include <QUrlQuery>
+#include <QCryptographicHash>
+#include <QRandomGenerator>
+#include <QHash>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QDir>
 
 namespace {
-QByteArray normalizePath(QByteArray rawPath)
-{
-    const int queryStart = rawPath.indexOf('?');
-    if (queryStart >= 0) {
-        rawPath = rawPath.left(queryStart);
-    }
 
-    if (rawPath.isEmpty()) {
-        return "/";
-    }
-    return rawPath;
+// -------------------------
+// Request model
+// -------------------------
+struct HttpRequest {
+    QByteArray method;
+    QByteArray target;   // "/path?x=y"
+    QByteArray path;     // "/path"
+    QHash<QByteArray, QByteArray> headers; // lowercase header -> value
+    QByteArray body;
+    bool headOnly = false;
+};
+
+static QByteArray normalizePath(QByteArray rawTarget)
+{
+    const int q = rawTarget.indexOf('?');
+    if (q >= 0) rawTarget = rawTarget.left(q);
+    if (rawTarget.isEmpty()) return "/";
+    return rawTarget;
 }
 
-QByteArray tokenFromPath(const QByteArray &rawPath)
+static QHash<QByteArray, QByteArray> parseHeaders(const QByteArray& headerBlock)
 {
-    const int queryStart = rawPath.indexOf('?');
-    if (queryStart < 0) {
-        return QByteArray();
+    QHash<QByteArray, QByteArray> out;
+    const QList<QByteArray> lines = headerBlock.split('\n');
+    for (QByteArray line : lines) {
+        line = line.trimmed();
+        if (line.isEmpty()) continue;
+        const int colon = line.indexOf(':');
+        if (colon <= 0) continue;
+        QByteArray key = line.left(colon).trimmed().toLower();
+        QByteArray val = line.mid(colon + 1).trimmed();
+        out.insert(key, val);
     }
+    return out;
+}
 
-    const QByteArray query = rawPath.mid(queryStart + 1);
+static bool parseRequest(const QByteArray& raw, HttpRequest& req)
+{
+    const int headerEnd = raw.indexOf("\r\n\r\n");
+    if (headerEnd < 0) return false;
+
+    const QByteArray headerPart = raw.left(headerEnd);
+    req.body = raw.mid(headerEnd + 4);
+
+    const QList<QByteArray> lines = headerPart.split('\n');
+    if (lines.isEmpty()) return false;
+
+    const QList<QByteArray> first = lines.first().trimmed().split(' ');
+    if (first.size() < 2) return false;
+
+    req.method = first.at(0).trimmed();
+    req.target = first.at(1).trimmed();
+    req.path = normalizePath(req.target);
+    req.headOnly = (req.method == "HEAD");
+
+    QByteArray headersOnly;
+    for (int i = 1; i < lines.size(); ++i) {
+        headersOnly += lines.at(i);
+        if (!headersOnly.endsWith('\n')) headersOnly += '\n';
+    }
+    req.headers = parseHeaders(headersOnly);
+
+    return true;
+}
+
+static int contentLength(const HttpRequest& req)
+{
+    const QByteArray v = req.headers.value("content-length");
+    bool ok = false;
+    const int n = v.toInt(&ok);
+    return ok ? n : 0;
+}
+
+static QByteArray queryValue(const QByteArray& rawTarget, const QByteArray& key)
+{
+    const int q = rawTarget.indexOf('?');
+    if (q < 0) return {};
+    const QByteArray query = rawTarget.mid(q + 1);
     const QList<QByteArray> pairs = query.split('&');
-    for (const QByteArray &pair : pairs) {
-        const int equalsIndex = pair.indexOf('=');
-        if (equalsIndex <= 0) {
-            continue;
-        }
 
-        const QByteArray key = pair.left(equalsIndex).trimmed();
-        if (key != "token") {
-            continue;
-        }
-
-        return pair.mid(equalsIndex + 1).trimmed();
+    for (const QByteArray& pair : pairs) {
+        const int eq = pair.indexOf('=');
+        if (eq <= 0) continue;
+        const QByteArray k = pair.left(eq).trimmed();
+        if (k != key) continue;
+        return pair.mid(eq + 1).trimmed();
     }
-
-    return QByteArray();
-}
+    return {};
 }
 
+// -------------------------
+// Resources
+// -------------------------
+static QByteArray loadResource(const QString& resPath)
+{
+    qInfo() << "exists :/web/login.html =" << QFile(":/web/login.html").exists();
+    qInfo() << "exists :/web/dashboard.html =" << QFile(":/web/dashboard.html").exists();
+    qInfo() << "dir :/web =" << QDir(":/web").entryList(QDir::Files);
+
+    QFile f(resPath);
+    if (!f.open(QIODevice::ReadOnly))
+        return {};
+    return f.readAll();
+}
+
+// -------------------------
+// Session auth (cookie)
+// -------------------------
+static QByteArray adminPassword()
+{
+    QByteArray p = qgetenv("FRIDGESENSE_ADMIN_PASSWORD").trimmed();
+    if (p.isEmpty()) p = "admin";
+    return p;
+}
+
+static QString newSessionId()
+{
+    QByteArray r(32, Qt::Uninitialized);
+    for (int i = 0; i < r.size(); ++i)
+        r[i] = char(QRandomGenerator::global()->generate() & 0xFF);
+
+    return QString::fromLatin1(QCryptographicHash::hash(r, QCryptographicHash::Sha256).toHex());
+}
+
+// sessionId -> expiry UTC
+static QHash<QString, QDateTime> g_sessions;
+
+static void sweepSessions()
+{
+    const auto now = QDateTime::currentDateTimeUtc();
+    for (auto it = g_sessions.begin(); it != g_sessions.end();) {
+        if (it.value() < now) it = g_sessions.erase(it);
+        else ++it;
+    }
+}
+
+static QString cookieValue(const HttpRequest& req, const QByteArray& name)
+{
+    const QByteArray cookieHdr = req.headers.value("cookie");
+    if (cookieHdr.isEmpty()) return {};
+
+    const QList<QByteArray> parts = cookieHdr.split(';');
+    for (QByteArray p : parts) {
+        p = p.trimmed();
+        if (!p.startsWith(name + "=")) continue;
+        return QString::fromLatin1(p.mid(name.size() + 1));
+    }
+    return {};
+}
+
+static bool isAuthed(const HttpRequest& req)
+{
+    sweepSessions();
+    const QString sid = cookieValue(req, "FSSESSID");
+    if (sid.isEmpty()) return false;
+
+    auto it = g_sessions.find(sid);
+    if (it == g_sessions.end()) return false;
+
+    it.value() = QDateTime::currentDateTimeUtc().addSecs(30 * 60);
+    return true;
+}
+
+// -------------------------
+// Response helpers
+// -------------------------
+static QByteArray statusTextFor(int code)
+{
+    switch (code) {
+    case 200: return "OK";
+    case 302: return "Found";
+    case 400: return "Bad Request";
+    case 404: return "Not Found";
+    case 405: return "Method Not Allowed";
+    case 413: return "Payload Too Large";
+    case 500: return "Internal Server Error";
+    default:  return "OK";
+    }
+}
+
+static void writeResponse(QTcpSocket* socket,
+                          int statusCode,
+                          const QByteArray& contentType,
+                          const QByteArray& body,
+                          const QByteArray& extraHeaders = {})
+{
+    if (!socket) return;
+
+    QByteArray resp;
+    resp += "HTTP/1.1 " + QByteArray::number(statusCode) + " " + statusTextFor(statusCode) + "\r\n";
+    resp += "Content-Type: " + contentType + "\r\n";
+    resp += "Content-Length: " + QByteArray::number(body.size()) + "\r\n";
+    resp += "Connection: close\r\n";
+    resp += extraHeaders;
+    resp += "\r\n";
+    resp += body;
+
+    socket->write(resp);
+    socket->flush();
+    socket->disconnectFromHost();
+}
+
+static void redirect(QTcpSocket* socket, const QByteArray& location, const QByteArray& extraHeaders = {})
+{
+    QByteArray headers = "Location: " + location + "\r\n";
+    headers += extraHeaders;
+    writeResponse(socket, 302, "text/plain; charset=utf-8", QByteArray(), headers);
+}
+
+static void respondNotFound(QTcpSocket* socket)
+{
+    writeResponse(socket, 404, "text/plain; charset=utf-8", "Not found\n");
+}
+
+static void respondMethodNotAllowed(QTcpSocket* socket)
+{
+    writeResponse(socket, 405, "text/plain; charset=utf-8", "Method Not Allowed\n");
+}
+
+} // namespace
+
+// -------------------------
+// WebUiServer
+// -------------------------
 WebUiServer::WebUiServer(InventoryManager *inventoryManager, QObject *parent)
-    : QObject(parent),
-    m_inventoryManager(inventoryManager),
-    m_authToken(qgetenv("KIOSK_WEBUI_TOKEN").trimmed())
+    : QObject(parent)
+    , m_inventoryManager(inventoryManager)
 {
     connect(&m_server, &QTcpServer::newConnection, this, &WebUiServer::handleConnection);
 }
 
-bool WebUiServer::isAuthorized(const QByteArray &request, const QByteArray &path) const
-{
-    if (m_authToken.isEmpty()) {
-        return true;
-    }
-
-    const QByteArray queryToken = tokenFromPath(path);
-    if (!queryToken.isEmpty() && queryToken == m_authToken) {
-        return true;
-    }
-
-    const QList<QByteArray> lines = request.split('\n');
-    for (const QByteArray &lineRaw : lines) {
-        const QByteArray line = lineRaw.trimmed();
-        if (!line.toLower().startsWith("authorization:")) {
-            continue;
-        }
-
-        const int separator = line.indexOf(':');
-        if (separator < 0) {
-            continue;
-        }
-
-        const QByteArray value = line.mid(separator + 1).trimmed();
-        if (value == "Bearer " + m_authToken) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-QByteArray WebUiServer::unauthorizedBody() const
-{
-    return "Unauthorized. Provide Authorization: Bearer <token> header or ?token=<token> query parameter.\n";
-}
-
 bool WebUiServer::start(const QHostAddress &address, quint16 port)
 {
-    if (m_server.isListening()) {
-        return true;
-    }
+    if (m_server.isListening()) return true;
 
     const bool ok = m_server.listen(address, port);
     if (ok) {
         const QString host = (address == QHostAddress::Any || address == QHostAddress::AnyIPv6)
-                                 ? QStringLiteral("0.0.0.0")
-                                 : address.toString();
+        ? QStringLiteral("0.0.0.0")
+        : address.toString();
         qInfo() << "Web UI available at http://" << host << ":" << port;
     } else {
         qWarning() << "Failed to start Web UI server:" << m_server.errorString();
@@ -120,123 +271,181 @@ void WebUiServer::handleConnection()
 
     connect(socket, &QTcpSocket::disconnected, socket, &QObject::deleteLater);
 
-    QByteArray request;
-    while (!request.contains("\r\n\r\n") && request.size() < 8192) {
-        if (!socket->waitForReadyRead(2000)) {
-            break;
+    QByteArray raw;
+    const int maxHeader = 16 * 1024;
+    while (!raw.contains("\r\n\r\n") && raw.size() < maxHeader) {
+        if (!socket->waitForReadyRead(2000)) break;
+        raw += socket->readAll();
+    }
+
+    if (raw.isEmpty()) {
+        writeResponse(socket, 400, "text/plain; charset=utf-8", "No request data\n");
+        return;
+    }
+
+    HttpRequest req;
+    if (!parseRequest(raw, req)) {
+        writeResponse(socket, 400, "text/plain; charset=utf-8", "Malformed request\n");
+        return;
+    }
+
+    if (req.method == "POST") {
+        const int cl = contentLength(req);
+        if (cl > 64 * 1024) {
+            writeResponse(socket, 413, "text/plain; charset=utf-8", "Payload too large\n");
+            return;
         }
-        request += socket->readAll();
+        while (req.body.size() < cl) {
+            if (!socket->waitForReadyRead(2000)) break;
+            req.body += socket->readAll();
+        }
+        if (req.body.size() < cl) {
+            writeResponse(socket, 400, "text/plain; charset=utf-8", "Incomplete request body\n");
+            return;
+        }
     }
 
-    if (request.isEmpty()) {
-        respond(socket, 400, "Bad Request", "text/plain", "No request data\n");
+    const bool isGetOrHead = (req.method == "GET" || req.method == "HEAD");
+    const bool isPost = (req.method == "POST");
+
+    const auto requireAuth = [&]() -> bool {
+        if (isAuthed(req)) return true;
+        redirect(socket, "/login");
+        return false;
+    };
+
+    qInfo() << "HTTP" << req.method << req.target;
+
+    // Root -> login
+    if (req.path == "/" || req.path == "/index.html") {
+        redirect(socket, "/login");
         return;
     }
 
-    const QList<QByteArray> lines = request.split('\n');
-    if (lines.isEmpty()) {
-        respond(socket, 400, "Bad Request", "text/plain", "Malformed request\n");
-        return;
-    }
-
-    const QList<QByteArray> requestLine = lines.first().trimmed().split(' ');
-    if (requestLine.size() < 2) {
-        respond(socket, 400, "Bad Request", "text/plain", "Malformed request line\n");
-        return;
-    }
-
-    const QByteArray method = requestLine.at(0);
-    const QByteArray rawPath = requestLine.at(1);
-    const QByteArray path = normalizePath(rawPath);
-
-    if (method != "GET" && method != "HEAD") {
-        respond(socket, 405, "Method Not Allowed", "text/plain", "Only GET and HEAD are supported\n");
-        return;
-    }
-
-    const bool headOnly = (method == "HEAD");
-
-    if (!isAuthorized(request, rawPath)) {
-        const QByteArray headers = "WWW-Authenticate: Bearer realm=\"QtPiKiosk\"\r\n";
-        respond(socket, 401, "Unauthorized", "text/plain", headOnly ? QByteArray() : unauthorizedBody(), headers);
-        return;
-    }
-
-    if (path == "/" || path == "/index.html") {
-        const QString body = QStringLiteral(
-                                 "<!doctype html><html><head><meta charset='utf-8'>"
-                                 "<title>QtPi Kiosk Export</title>"
-                                 "<style>body{font-family:sans-serif;margin:2rem;max-width:700px;}"
-                                 "a{display:inline-block;padding:.8rem 1.2rem;background:#0b5fff;color:#fff;"
-                                 "text-decoration:none;border-radius:8px;}"
-                                 "small{display:block;margin-top:1rem;color:#666;}</style></head><body>"
-                                 "<h1>QtPi Kiosk Data Export</h1>"
-                                 "<p>Download the inventory database contents as CSV or JSON.</p>"
-                                 "<a href='/export.csv'>Download export.csv</a>"
-                                 " <a href='/api/inventory.json'>View inventory.json</a>"
-                                 "<small>Generated endpoint time: %1</small>"
-                                 "</body></html>")
-                                 .arg(QDateTime::currentDateTime().toString(Qt::ISODate));
-
-        respond(socket, 200, "OK", "text/html; charset=utf-8", headOnly ? QByteArray() : body.toUtf8());
-        return;
-    }
-
-    if (path == "/export.csv") {
-        if (!m_inventoryManager) {
-            respond(socket, 500, "Internal Server Error", "text/plain", "Inventory manager unavailable\n");
+    // Login page
+    if (req.path == "/login") {
+        if (isGetOrHead) {
+            const QByteArray html = loadResource(":/web/web/login.html");
+            if (html.isEmpty()) {
+                writeResponse(socket, 500, "text/plain; charset=utf-8", "Missing resource :/web/login.html\n");
+                return;
+            }
+            writeResponse(socket, 200, "text/html; charset=utf-8", req.headOnly ? QByteArray() : html);
             return;
         }
 
-        const QByteArray csv = headOnly ? QByteArray() : m_inventoryManager->exportInventoryCsv().toUtf8();
+        if (isPost) {
+            QUrlQuery q(QString::fromUtf8(req.body));
+            const QString pass = q.queryItemValue("password");
+
+            if (pass.toUtf8() == adminPassword()) {
+                const QString sid = newSessionId();
+                g_sessions.insert(sid, QDateTime::currentDateTimeUtc().addSecs(30 * 60));
+
+                const QByteArray cookie =
+                    "Set-Cookie: FSSESSID=" + sid.toUtf8() + "; Path=/; HttpOnly; SameSite=Lax\r\n";
+                redirect(socket, "/dashboard", cookie);
+            } else {
+                redirect(socket, "/login?err=1");
+            }
+            return;
+        }
+
+        respondMethodNotAllowed(socket);
+        return;
+    }
+
+    if (req.path == "/logout") {
+        const QString sid = cookieValue(req, "FSSESSID");
+        if (!sid.isEmpty()) g_sessions.remove(sid);
+
+        const QByteArray cookie =
+            "Set-Cookie: FSSESSID=deleted; Path=/; Max-Age=0; HttpOnly; SameSite=Lax\r\n";
+        redirect(socket, "/login", cookie);
+        return;
+    }
+
+    // Public static assets needed by login/dashboard pages
+    if (req.path == "/styles.css") {
+        if (!isGetOrHead) { respondMethodNotAllowed(socket); return; }
+
+        const QByteArray css = loadResource(":/web/web/styles.css");
+        if (css.isEmpty()) {
+            writeResponse(socket, 500, "text/plain; charset=utf-8", "Missing resource :/web/styles.css\n");
+            return;
+        }
+        writeResponse(socket, 200, "text/css; charset=utf-8", req.headOnly ? QByteArray() : css);
+        return;
+    }
+
+    if (req.path == "/app.js") {
+        if (!isGetOrHead) { respondMethodNotAllowed(socket); return; }
+
+        const QByteArray js = loadResource(":/web/app.js");
+        if (js.isEmpty()) {
+            writeResponse(socket, 500, "text/plain; charset=utf-8", "Missing resource :/web/app.js\n");
+            return;
+        }
+        writeResponse(socket, 200, "application/javascript; charset=utf-8", req.headOnly ? QByteArray() : js);
+        return;
+    }
+
+    // Protected dashboard page
+    if (req.path == "/dashboard" || req.path == "/dashboard.html") {
+        if (!isGetOrHead) { respondMethodNotAllowed(socket); return; }
+        if (!requireAuth()) return;
+
+        const QByteArray html = loadResource(":/web/web/dashboard.html");
+        if (html.isEmpty()) {
+            writeResponse(socket, 500, "text/plain; charset=utf-8", "Missing resource :/web/dashboard.html\n");
+            return;
+        }
+        writeResponse(socket, 200, "text/html; charset=utf-8", req.headOnly ? QByteArray() : html);
+        return;
+    }
+
+    // Protected export endpoint
+    if (req.path == "/export.csv") {
+        if (!isGetOrHead) { respondMethodNotAllowed(socket); return; }
+        if (!requireAuth()) return;
+
+        if (!m_inventoryManager) {
+            writeResponse(socket, 500, "text/plain; charset=utf-8", "Inventory manager unavailable\n");
+            return;
+        }
+
+        const QByteArray csv = req.headOnly ? QByteArray() : m_inventoryManager->exportInventoryCsv().toUtf8();
         const QByteArray headers = "Content-Disposition: attachment; filename=\"export.csv\"\r\n";
-        respond(socket, 200, "OK", "text/csv; charset=utf-8", csv, headers);
+        writeResponse(socket, 200, "text/csv; charset=utf-8", csv, headers);
         return;
     }
 
-    if (path == "/api/inventory.json") {
+    // Protected inventory JSON endpoint
+    if (req.path == "/api/inventory.json") {
+        if (!isGetOrHead) { respondMethodNotAllowed(socket); return; }
+        if (!requireAuth()) return;
+
         if (!m_inventoryManager) {
-            respond(socket, 500, "Internal Server Error", "text/plain", "Inventory manager unavailable\n");
+            writeResponse(socket, 500, "text/plain; charset=utf-8", "Inventory manager unavailable\n");
             return;
         }
 
-        QByteArray body;
-        if (!headOnly) {
+        QByteArray out;
+        if (!req.headOnly) {
             const QVariantList rows = m_inventoryManager->loadInventory(0);
             QJsonArray items;
-            for (const QVariant &row : rows) {
+            for (const QVariant &row : rows)
                 items.append(QJsonObject::fromVariantMap(row.toMap()));
-            }
 
             QJsonObject root;
             root.insert("count", items.size());
             root.insert("inventory", items);
-            body = QJsonDocument(root).toJson(QJsonDocument::Indented);
+            out = QJsonDocument(root).toJson(QJsonDocument::Indented);
         }
 
-        respond(socket, 200, "OK", "application/json; charset=utf-8", body);
+        writeResponse(socket, 200, "application/json; charset=utf-8", out);
         return;
     }
 
-    respond(socket, 404, "Not Found", "text/plain", "Not found\n");
-}
-
-void WebUiServer::respond(QTcpSocket *socket, int statusCode, const QByteArray &statusText,
-                          const QByteArray &contentType, const QByteArray &body,
-                          const QByteArray &extraHeaders)
-{
-    if (!socket) return;
-
-    QByteArray response;
-    response += "HTTP/1.1 " + QByteArray::number(statusCode) + " " + statusText + "\r\n";
-    response += "Content-Type: " + contentType + "\r\n";
-    response += "Content-Length: " + QByteArray::number(body.size()) + "\r\n";
-    response += "Connection: close\r\n";
-    response += extraHeaders;
-    response += "\r\n";
-    response += body;
-
-    socket->write(response);
-    socket->flush();
-    socket->disconnectFromHost();
+    respondNotFound(socket);
 }

@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body class="theme-dark">
+  <main class="center">
+    <form class="card loginCard" method="POST" action="/login">
+      <h1 class="loginTitle">FridgeSense Web Dashboard Login</h1>
+      <p class="loginSub">Sign in to view and export your inventory.</p>
+
+      <label class="label" for="password">Password</label>
+      <input id="password" name="password" class="input" type="password" autocomplete="current-password" required>
+
+      <button class="btn loginBtn" type="submit">Sign in</button>
+
+      <div id="err" class="errorBox" hidden>Invalid password</div>
+    </form>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.get("err") === "1") {
+      document.getElementById("err").hidden = false;
+    }
+  </script>
+</body>
+</html>

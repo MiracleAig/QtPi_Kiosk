@@ -14,7 +14,12 @@ qt_add_executable(appKiosk
     productlookup.h
     webuiserver.cpp
     webuiserver.h
+    inventorymanager.h
+    inventorymanager.cpp
 )
+
+# Embed web UI files into the binary
+qt_add_resources(appKiosk WEBUI_RESOURCES webui.qrc)
 
 set_source_files_properties(AppState.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
@@ -28,7 +33,15 @@ qt_add_qml_module(appKiosk
         screens/ScanScreen.qml
         screens/ConfirmScreen.qml
         screens/SavedScreen.qml
-        SOURCES inventorymanager.h inventorymanager.cpp
+)
+
+qt_add_resources(appKiosk "webui"
+  PREFIX "/web"
+  FILES
+    web/login.html
+    web/dashboard.html
+    web/styles.css
+    web/app.js
 )
 
 target_link_libraries(appKiosk

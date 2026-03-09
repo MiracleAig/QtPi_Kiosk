@@ -1,0 +1,12 @@
+module Kiosk
+typeinfo appKiosk.qmltypes
+prefer :/qt/qml/Kiosk/
+Main 254.0 Main.qml
+singleton AppState 254.0 AppState.qml
+MockProducts 254.0 MockProducts.js
+BarcodeWedge 254.0 components/BarcodeWedge.qml
+ScanScreen 254.0 screens/ScanScreen.qml
+ConfirmScreen 254.0 screens/ConfirmScreen.qml
+SavedScreen 254.0 screens/SavedScreen.qml
+depends QtQuick
+

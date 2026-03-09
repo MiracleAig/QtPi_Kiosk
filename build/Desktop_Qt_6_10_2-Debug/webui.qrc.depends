@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/web">
+        <file>web/login.html</file>
+        <file>web/styles.css</file>
+        <file>web/dashboard.html</file>
+        <file>web/app.js</file>
+    </qresource>
+</RCC>

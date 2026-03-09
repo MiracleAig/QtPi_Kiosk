@@ -1,0 +1,190 @@
+[
+    {
+        "classes": [
+            {
+                "className": "InventoryManager",
+                "lineNumber": 8,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "product",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 14,
+                        "name": "insertProduct",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "limit",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 15,
+                        "name": "loadInventory",
+                        "returnType": "QVariantList"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "isCloned": true,
+                        "lineNumber": 15,
+                        "name": "loadInventory",
+                        "returnType": "QVariantList"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 16,
+                        "name": "exportInventoryCsv",
+                        "returnType": "QString"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "barcode",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 19,
+                        "name": "findCachedProduct",
+                        "returnType": "QVariantMap"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "product",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 20,
+                        "name": "cacheProduct",
+                        "returnType": "bool"
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "InventoryManager",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 23,
+                        "name": "inventoryChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "message",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 24,
+                        "name": "errorOccurred",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "inventorymanager.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "ProductLookup",
+                "lineNumber": 6,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "barcode",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 11,
+                        "name": "lookup",
+                        "returnType": "void"
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "ProductLookup",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "product",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 14,
+                        "name": "productReady",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "message",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 15,
+                        "name": "error",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "productlookup.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "WebUiServer",
+                "lineNumber": 10,
+                "object": true,
+                "qualifiedClassName": "WebUiServer",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "webuiserver.h",
+        "outputRevision": 69
+    }
+]
