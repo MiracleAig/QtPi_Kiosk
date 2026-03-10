@@ -817,6 +817,14 @@ appKiosk_autogen/timestamp: \
 	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6QuickTools/Qt6QuickToolsTargets-relwithdebinfo.cmake \
 	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6QuickTools/Qt6QuickToolsTargets.cmake \
 	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6QuickTools/Qt6QuickToolsVersionlessTargets.cmake \
+	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6SerialPort/Qt6SerialPortAdditionalTargetInfo.cmake \
+	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6SerialPort/Qt6SerialPortConfig.cmake \
+	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6SerialPort/Qt6SerialPortConfigVersion.cmake \
+	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6SerialPort/Qt6SerialPortConfigVersionImpl.cmake \
+	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6SerialPort/Qt6SerialPortDependencies.cmake \
+	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6SerialPort/Qt6SerialPortTargets-relwithdebinfo.cmake \
+	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6SerialPort/Qt6SerialPortTargets.cmake \
+	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6SerialPort/Qt6SerialPortVersionlessAliasTargets.cmake \
 	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6Sql/Qt6QIBaseDriverPluginAdditionalTargetInfo.cmake \
 	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6Sql/Qt6QIBaseDriverPluginConfig.cmake \
 	/home/miracleaigbogun/Qt/6.10.2/gcc_64/lib/cmake/Qt6Sql/Qt6QIBaseDriverPluginTargets-relwithdebinfo.cmake \
