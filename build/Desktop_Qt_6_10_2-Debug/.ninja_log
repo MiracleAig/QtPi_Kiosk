@@ -159,3 +159,16 @@
 24	31	1773096166260011593	/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/meta_types/qt6appkiosk_metatypes.json	a0926fdedfc10ff9
 31	3992	1773096166266272679	CMakeFiles/appKiosk.dir/main.cpp.o	f81aed46aff494e8
 3993	4410	1773096170228304990	appKiosk	91c60a1f6e0bb6d2
+10	14	1773418119955734028	.qt/appKiosk_qml.txt	ca2b1e882eee3090
+10	14	1773418119955734028	/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.qt/appKiosk_qml.txt	ca2b1e882eee3090
+10	87	1773418120027591843	.qt/qml_imports/appKiosk_build.cmake	efda705139ea1221
+10	87	1773418120027591843	/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.qt/qml_imports/appKiosk_build.cmake	efda705139ea1221
+87	96	1773418120036591952	.qt/rcc/qrc_appKiosk_raw_qml_0.cpp	538e133f1abd4b5e
+87	96	1773418120036591952	/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.qt/rcc/qrc_appKiosk_raw_qml_0.cpp	538e133f1abd4b5e
+87	152	1773418120090592606	.rcc/qmlcache/appKiosk_screens/ScanScreen_qml.cpp	9851301e5ee03848
+87	152	1773418120090592606	.rcc/qmlcache/appKiosk_screens/ScanScreen_qml.cpp.aotstats	9851301e5ee03848
+87	152	1773418120090592606	/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.rcc/qmlcache/appKiosk_screens/ScanScreen_qml.cpp	9851301e5ee03848
+87	152	1773418120090592606	/home/miracleaigbogun/Documents/Kiosk/build/Desktop_Qt_6_10_2-Debug/.rcc/qmlcache/appKiosk_screens/ScanScreen_qml.cpp.aotstats	9851301e5ee03848
+153	183	1773418120094592655	CMakeFiles/appKiosk.dir/build/Desktop_Qt_6_10_2-Debug/.qt/rcc/qrc_appKiosk_raw_qml_0.cpp.o	4ab13134515639b7
+152	1560	1773418120093592643	CMakeFiles/appKiosk.dir/build/Desktop_Qt_6_10_2-Debug/.rcc/qmlcache/appKiosk_screens/ScanScreen_qml.cpp.o	4ff3ddf4c0ff2a61
+1560	1943	1773418121501609692	appKiosk	91c60a1f6e0bb6d2
