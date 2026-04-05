@@ -119,12 +119,12 @@ function showDetails(item) {
   const barcode = escapeHtml(item.barcode || "-");
   const size = escapeHtml(item.size || "-");
 
-  const calories = escapeHtml(String(item.calories ?? "-"));
-  const protein = escapeHtml(String(item.protein ?? "-"));
-  const carbs = escapeHtml(String(item.carbs ?? "-"));
-  const fat = escapeHtml(String(item.fat ?? "-"));
-  const sugar = escapeHtml(String(item.sugar ?? "-"));
-  const sodium = escapeHtml(String(item.sodium ?? "-"));
+  const calories = escapeHtml(String(getNutritionValue(item, ["calories", "energy_kcal", "energy-kcal_100g", "energy-kcal"])));
+  const protein = escapeHtml(String(getNutritionValue(item, ["protein", "proteins", "proteins_100g", "protein_100g"])));
+  const carbs = escapeHtml(String(getNutritionValue(item, ["carbs", "carbohydrates", "carbohydrates_100g", "carbs_100g"])));
+  const fat = escapeHtml(String(getNutritionValue(item, ["fat", "fat_100g"])));
+  const sugar = escapeHtml(String(getNutritionValue(item, ["sugar", "sugars", "sugars_100g", "sugar_100g"])));
+  const sodium = escapeHtml(String(getNutritionValue(item, ["sodium", "sodium_100g", "salt", "salt_100g"])));
 
   document.getElementById("detailsContent").innerHTML = `
     <div class="details-card">
@@ -237,6 +237,21 @@ async function deleteFood(barcode) {
     console.error(err);
     alert(err.message);
   }
+}
+
+function getNutritionValue(item, keys) {
+  const nutriments = item && typeof item.nutriments === "object" ? item.nutriments : null;
+
+  for (const key of keys) {
+    const value = item?.[key];
+    if (value !== undefined && value !== null && value !== "") return value;
+
+    if (nutriments && nutriments[key] !== undefined && nutriments[key] !== null && nutriments[key] !== "") {
+      return nutriments[key];
+    }
+  }
+
+  return "-";
 }
 
 function parseNumberField(id) {
