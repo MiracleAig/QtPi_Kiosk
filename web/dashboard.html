@@ -6,222 +6,185 @@
   <title>FridgeSense Dashboard</title>
   <link rel="stylesheet" href="/styles.css" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f4f6f8;
-      color: #222;
-    }
-
-    header {
-      background: #1f2937;
-      color: white;
-      padding: 16px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .top-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .container {
+    .dashboardLayout {
       display: grid;
       grid-template-columns: 1.2fr 1fr;
-      gap: 20px;
-      padding: 20px;
+      gap: 14px;
+      margin-top: 14px;
     }
 
-    .card {
-      background: white;
-      border-radius: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      padding: 18px;
-    }
-
-    .card h2 {
-      margin-top: 0;
+    .fullWidth {
+      grid-column: 1 / -1;
     }
 
     .toolbar {
       display: flex;
       gap: 10px;
-      margin-bottom: 14px;
       flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
     }
 
-    input, button {
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 14px;
+    .tableWrap {
+      margin-top: 0;
     }
 
-    button {
-      cursor: pointer;
-      border: none;
-      background: #2563eb;
-      color: white;
-    }
-
-    button.danger {
-      background: #dc2626;
-    }
-
-    button.secondary {
-      background: #6b7280;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 10px;
-      border-bottom: 1px solid #e5e7eb;
-      vertical-align: top;
-    }
-
-    th {
-      background: #f9fafb;
-    }
-
-    tr:hover {
-      background: #f3f4f6;
+    [data-clickable="true"] {
       cursor: pointer;
     }
 
-    .details img {
+    .detailsImage {
       width: 100%;
       max-width: 260px;
       border-radius: 12px;
       display: block;
-      margin-bottom: 16px;
-      background: #eee;
+      margin-bottom: 14px;
+      border: 1px solid var(--line);
+      background: #0b1220;
     }
 
-    .nutrition-grid {
+    .detailsTitle {
+      margin: 4px 0 8px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .detailsMeta {
+      margin: 4px 0;
+      color: var(--muted);
+    }
+
+    .nutritionGrid {
+      margin-top: 14px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-      margin-top: 12px;
     }
 
-    .nutrition-item {
-      background: #f9fafb;
+    .nutritionItem {
+      background: #0b1220;
+      border: 1px solid #2a3a66;
+      border-radius: 12px;
       padding: 10px;
-      border-radius: 10px;
     }
 
-    .form-grid {
+    .nutritionLabel {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .nutritionValue {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .formGrid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
     }
 
-    .form-grid input {
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .full {
+    .formGrid .full {
       grid-column: 1 / -1;
     }
 
-    .muted {
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .empty {
-      padding: 20px;
+    #emptyState {
+      display: none;
       text-align: center;
-      color: #6b7280;
+      padding: 16px;
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      color: var(--muted);
+      margin-top: 10px;
     }
 
     @media (max-width: 950px) {
-      .container {
+      .dashboardLayout {
         grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
-<body>
-  <header>
-    <h1>FridgeSense Dashboard</h1>
-    <div class="top-actions">
-      <button class="secondary" onclick="refreshInventory()">Refresh</button>
-      <a href="/logout"><button class="danger">Logout</button></a>
+<body class="theme-dark">
+  <header class="topbar">
+    <div class="wrap topbarRow">
+      <div>
+        <h1>FridgeSense Dashboard</h1>
+        <div class="pill">Inventory and nutrition management</div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" onclick="refreshInventory()">Refresh</button>
+        <a class="btn ghost" href="/logout">Logout</a>
+      </div>
     </div>
   </header>
 
-  <div class="container">
+  <main class="wrap dashboardLayout">
     <section class="card">
-      <h2>Inventory</h2>
-
-      <div class="toolbar">
-        <input type="text" id="searchInput" placeholder="Search foods..." oninput="renderInventory()" />
+      <div class="cardHead">
+        <div class="cardTitle">Inventory</div>
       </div>
-
-      <div id="inventoryTableWrap">
-        <table id="inventoryTable">
-          <thead>
-            <tr>
-              <th>Food</th>
-              <th>Brand</th>
-              <th>Barcode</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="inventoryBody"></tbody>
-        </table>
-      </div>
-
-      <div id="emptyState" class="empty" style="display:none;">
-        No foods found.
-      </div>
-    </section>
-
-    <section class="card details">
-      <h2>Food Details</h2>
-
-      <div id="detailsContent">
-        <p class="muted">Select a food item to view details.</p>
-      </div>
-    </section>
-
-    <section class="card" style="grid-column: 1 / -1;">
-      <h2>Add Food</h2>
-      <form id="addFoodForm">
-        <div class="form-grid">
-          <input type="text" id="barcode" placeholder="Barcode" required />
-          <input type="text" id="name" placeholder="Food name" required />
-          <input type="text" id="brand" placeholder="Brand" />
-          <input type="text" id="size" placeholder="Size" />
-          <input type="url" id="image" placeholder="Image URL" class="full" />
-          <input type="number" step="any" id="calories" placeholder="Calories" />
-          <input type="number" step="any" id="protein" placeholder="Protein (g)" />
-          <input type="number" step="any" id="carbs" placeholder="Carbs (g)" />
-          <input type="number" step="any" id="fat" placeholder="Fat (g)" />
-          <input type="number" step="any" id="sugar" placeholder="Sugar (g)" />
-          <input type="number" step="any" id="sodium" placeholder="Sodium (mg)" />
-          <button type="submit" class="full">Add Food</button>
+      <div class="cardBody cardBodyTight">
+        <div class="toolbar">
+          <input class="input" type="text" id="searchInput" placeholder="Search foods..." oninput="renderInventory()" />
         </div>
-      </form>
-      <p class="muted" id="formMessage"></p>
+
+        <div id="inventoryTableWrap" class="tableWrap">
+          <table id="inventoryTable">
+            <thead>
+              <tr>
+                <th>Food</th>
+                <th>Brand</th>
+                <th>Barcode</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryBody"></tbody>
+          </table>
+        </div>
+
+        <div id="emptyState">No foods found.</div>
+      </div>
     </section>
-  </div>
+
+    <section class="card">
+      <div class="cardHead">
+        <div class="cardTitle">Food Details</div>
+      </div>
+      <div class="cardBody">
+        <div id="detailsContent">
+          <p class="muted">Select a food item to view details.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card fullWidth">
+      <div class="cardHead">
+        <div class="cardTitle">Add Food</div>
+      </div>
+      <div class="cardBody">
+        <form id="addFoodForm">
+          <div class="formGrid">
+            <input class="input" type="text" id="barcode" placeholder="Barcode" required />
+            <input class="input" type="text" id="name" placeholder="Food name" required />
+            <input class="input" type="text" id="brand" placeholder="Brand" />
+            <input class="input" type="text" id="size" placeholder="Size" />
+            <input class="input full" type="url" id="image" placeholder="Image URL" />
+            <input class="input" type="number" step="any" id="calories" placeholder="Calories" />
+            <input class="input" type="number" step="any" id="protein" placeholder="Protein (g)" />
+            <input class="input" type="number" step="any" id="carbs" placeholder="Carbs (g)" />
+            <input class="input" type="number" step="any" id="fat" placeholder="Fat (g)" />
+            <input class="input" type="number" step="any" id="sugar" placeholder="Sugar (g)" />
+            <input class="input" type="number" step="any" id="sodium" placeholder="Sodium (mg)" />
+            <button type="submit" class="btn full">Add Food</button>
+          </div>
+        </form>
+        <p class="muted" id="formMessage"></p>
+      </div>
+    </section>
+  </main>
 
   <script>
     let inventory = [];
@@ -278,6 +241,7 @@
 
       filtered.forEach(item => {
         const tr = document.createElement('tr');
+        tr.setAttribute('data-clickable', 'true');
         tr.onclick = () => showDetails(item);
 
         tr.innerHTML = `
@@ -285,7 +249,7 @@
           <td>${escapeHtml(item.brand || item.brands || '-')}</td>
           <td>${escapeHtml(item.barcode || item.code || '-')}</td>
           <td>
-            <button class="danger" onclick="event.stopPropagation(); deleteFood('${escapeJs(item.barcode || item.code || '')}')">
+            <button class="btn ghost" onclick="event.stopPropagation(); deleteFood('${escapeJs(item.barcode || item.code || '')}')">
               Delete
             </button>
           </td>
@@ -304,29 +268,29 @@
       const barcode = item.barcode || item.code || '-';
       const size = item.size || item.quantity || '-';
 
-      const calories = item.calories ?? item.energy_kcal ?? '-';
-      const protein = item.protein ?? '-';
-      const carbs = item.carbs ?? item.carbohydrates ?? '-';
-      const fat = item.fat ?? '-';
-      const sugar = item.sugar ?? '-';
-      const sodium = item.sodium ?? '-';
+      const calories = getNutritionValue(item, ['calories', 'energy_kcal', 'energy-kcal_100g', 'energy-kcal']);
+      const protein = getNutritionValue(item, ['protein', 'proteins', 'proteins_100g', 'protein_100g']);
+      const carbs = getNutritionValue(item, ['carbs', 'carbohydrates', 'carbohydrates_100g', 'carbs_100g']);
+      const fat = getNutritionValue(item, ['fat', 'fat_100g']);
+      const sugar = getNutritionValue(item, ['sugar', 'sugars', 'sugars_100g', 'sugar_100g']);
+      const sodium = getNutritionValue(item, ['sodium', 'sodium_100g', 'salt', 'salt_100g']);
 
       document.getElementById('detailsContent').innerHTML = `
-        <img src="${escapeAttr(image || 'https://via.placeholder.com/260x260?text=No+Image')}" alt="Food image"
+        <img class="detailsImage" src="${escapeAttr(image || 'https://via.placeholder.com/260x260?text=No+Image')}" alt="Food image"
              onerror="this.src='https://via.placeholder.com/260x260?text=No+Image'">
 
-        <h3>${escapeHtml(name)}</h3>
-        <p><strong>Brand:</strong> ${escapeHtml(brand)}</p>
-        <p><strong>Barcode:</strong> ${escapeHtml(barcode)}</p>
-        <p><strong>Size:</strong> ${escapeHtml(size)}</p>
+        <h3 class="detailsTitle">${escapeHtml(name)}</h3>
+        <p class="detailsMeta"><strong>Brand:</strong> ${escapeHtml(brand)}</p>
+        <p class="detailsMeta"><strong>Barcode:</strong> ${escapeHtml(barcode)}</p>
+        <p class="detailsMeta"><strong>Size:</strong> ${escapeHtml(size)}</p>
 
-        <div class="nutrition-grid">
-          <div class="nutrition-item"><strong>Calories</strong><br>${escapeHtml(String(calories))}</div>
-          <div class="nutrition-item"><strong>Protein</strong><br>${escapeHtml(String(protein))} g</div>
-          <div class="nutrition-item"><strong>Carbs</strong><br>${escapeHtml(String(carbs))} g</div>
-          <div class="nutrition-item"><strong>Fat</strong><br>${escapeHtml(String(fat))} g</div>
-          <div class="nutrition-item"><strong>Sugar</strong><br>${escapeHtml(String(sugar))} g</div>
-          <div class="nutrition-item"><strong>Sodium</strong><br>${escapeHtml(String(sodium))} mg</div>
+        <div class="nutritionGrid">
+          <div class="nutritionItem"><div class="nutritionLabel">Calories</div><div class="nutritionValue">${escapeHtml(String(calories))}</div></div>
+          <div class="nutritionItem"><div class="nutritionLabel">Protein (g)</div><div class="nutritionValue">${escapeHtml(String(protein))}</div></div>
+          <div class="nutritionItem"><div class="nutritionLabel">Carbs (g)</div><div class="nutritionValue">${escapeHtml(String(carbs))}</div></div>
+          <div class="nutritionItem"><div class="nutritionLabel">Fat (g)</div><div class="nutritionValue">${escapeHtml(String(fat))}</div></div>
+          <div class="nutritionItem"><div class="nutritionLabel">Sugar (g)</div><div class="nutritionValue">${escapeHtml(String(sugar))}</div></div>
+          <div class="nutritionItem"><div class="nutritionLabel">Sodium (mg)</div><div class="nutritionValue">${escapeHtml(String(sodium))}</div></div>
         </div>
       `;
     }
@@ -386,6 +350,21 @@
           'Could not add food. You still need to add the add endpoint in Qt.';
       }
     });
+
+    function getNutritionValue(item, keys) {
+      const nutriments = item && typeof item.nutriments === 'object' ? item.nutriments : null;
+
+      for (const key of keys) {
+        const direct = item?.[key];
+        if (direct !== undefined && direct !== null && direct !== '') return direct;
+
+        if (nutriments && nutriments[key] !== undefined && nutriments[key] !== null && nutriments[key] !== '') {
+          return nutriments[key];
+        }
+      }
+
+      return '-';
+    }
 
     function escapeHtml(value) {
       return String(value)

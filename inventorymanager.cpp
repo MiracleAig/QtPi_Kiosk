@@ -23,6 +23,17 @@ QString csvEscape(const QString &value)
     escaped.replace('"', "\"\"");
     return '"' + escaped + '"';
 }
+
+QVariant normalizedNumber(const QVariant &value)
+{
+    if (!value.isValid() || value.isNull()) return QVariant();
+
+    bool ok = false;
+    const double n = value.toDouble(&ok);
+    if (!ok) return QVariant();
+
+    return n;
+}
 }
 
 InventoryManager::InventoryManager(QObject *parent) : QObject(parent)
@@ -85,6 +96,12 @@ bool InventoryManager::ensureSchema()
             brand TEXT,
             size TEXT,
             image TEXT,
+            calories REAL,
+            protein REAL,
+            carbs REAL,
+            fat REAL,
+            sugar REAL,
+            sodium REAL,
             created_at INTEGER NOT NULL
         );
     )SQL";
@@ -106,6 +123,12 @@ bool InventoryManager::ensureSchema()
             size TEXT,
             image TEXT,
             image_local TEXT,
+            calories REAL,
+            protein REAL,
+            carbs REAL,
+            fat REAL,
+            sugar REAL,
+            sodium REAL,
             updated_at INTEGER NOT NULL
         );
     )SQL";
@@ -115,9 +138,20 @@ bool InventoryManager::ensureSchema()
         return false;
     }
 
-    // Backward-compat: if DB was created before image_local existed, try to add it.
-    // This will error after the first time (duplicate column) — safe to ignore.
+    // Backward-compat migrations. Duplicate-column errors are safe to ignore.
     q.exec("ALTER TABLE product_cache ADD COLUMN image_local TEXT;");
+    q.exec("ALTER TABLE product_cache ADD COLUMN calories REAL;");
+    q.exec("ALTER TABLE product_cache ADD COLUMN protein REAL;");
+    q.exec("ALTER TABLE product_cache ADD COLUMN carbs REAL;");
+    q.exec("ALTER TABLE product_cache ADD COLUMN fat REAL;");
+    q.exec("ALTER TABLE product_cache ADD COLUMN sugar REAL;");
+    q.exec("ALTER TABLE product_cache ADD COLUMN sodium REAL;");
+    q.exec("ALTER TABLE inventory ADD COLUMN calories REAL;");
+    q.exec("ALTER TABLE inventory ADD COLUMN protein REAL;");
+    q.exec("ALTER TABLE inventory ADD COLUMN carbs REAL;");
+    q.exec("ALTER TABLE inventory ADD COLUMN fat REAL;");
+    q.exec("ALTER TABLE inventory ADD COLUMN sugar REAL;");
+    q.exec("ALTER TABLE inventory ADD COLUMN sodium REAL;");
 
     q.exec("CREATE INDEX IF NOT EXISTS idx_cache_updated_at ON product_cache(updated_at);");
 
@@ -132,8 +166,16 @@ bool InventoryManager::insertProduct(const QVariantMap &product)
     QSqlQuery q(db);
 
     q.prepare(R"SQL(
-        INSERT INTO inventory (barcode, name, brand, size, image, created_at)
-        VALUES (:barcode, :name, :brand, :size, :image, :created_at)
+        INSERT INTO inventory (
+            barcode, name, brand, size, image,
+            calories, protein, carbs, fat, sugar, sodium,
+            created_at
+        )
+        VALUES (
+            :barcode, :name, :brand, :size, :image,
+            :calories, :protein, :carbs, :fat, :sugar, :sodium,
+            :created_at
+        )
     )SQL");
 
     q.bindValue(":barcode", product.value("barcode").toString());
@@ -141,6 +183,12 @@ bool InventoryManager::insertProduct(const QVariantMap &product)
     q.bindValue(":brand",   product.value("brand").toString());
     q.bindValue(":size",    product.value("size").toString());
     q.bindValue(":image",   product.value("image").toString());
+    q.bindValue(":calories", normalizedNumber(product.value("calories")));
+    q.bindValue(":protein", normalizedNumber(product.value("protein")));
+    q.bindValue(":carbs", normalizedNumber(product.value("carbs")));
+    q.bindValue(":fat", normalizedNumber(product.value("fat")));
+    q.bindValue(":sugar", normalizedNumber(product.value("sugar")));
+    q.bindValue(":sodium", normalizedNumber(product.value("sodium")));
     q.bindValue(":created_at", QDateTime::currentSecsSinceEpoch());
 
     if (!q.exec()) {
@@ -161,7 +209,8 @@ QVariantList InventoryManager::loadInventory(int limit)
     QSqlQuery q(db);
 
     QString sql =
-        "SELECT id, barcode, name, brand, size, image, created_at "
+        "SELECT id, barcode, name, brand, size, image, "
+        "calories, protein, carbs, fat, sugar, sodium, created_at "
         "FROM inventory ORDER BY created_at DESC";
     if (limit > 0) sql += " LIMIT " + QString::number(limit);
 
@@ -178,7 +227,13 @@ QVariantList InventoryManager::loadInventory(int limit)
         row["brand"] = q.value(3);
         row["size"] = q.value(4);
         row["image"] = q.value(5);
-        row["created_at"] = q.value(6);
+        row["calories"] = q.value(6);
+        row["protein"] = q.value(7);
+        row["carbs"] = q.value(8);
+        row["fat"] = q.value(9);
+        row["sugar"] = q.value(10);
+        row["sodium"] = q.value(11);
+        row["created_at"] = q.value(12);
         out.append(row);
     }
     return out;
@@ -189,7 +244,7 @@ QString InventoryManager::exportInventoryCsv()
     const QVariantList rows = loadInventory(0);
 
     QStringList lines;
-    lines << "id,barcode,name,brand,size,image,created_at";
+    lines << "id,barcode,name,brand,size,image,calories,protein,carbs,fat,sugar,sodium,created_at";
 
     for (const QVariant &item : rows) {
         const QVariantMap row = item.toMap();
@@ -201,6 +256,12 @@ QString InventoryManager::exportInventoryCsv()
              << csvEscape(row.value("brand").toString())
              << csvEscape(row.value("size").toString())
              << csvEscape(row.value("image").toString())
+             << csvEscape(row.value("calories").toString())
+             << csvEscape(row.value("protein").toString())
+             << csvEscape(row.value("carbs").toString())
+             << csvEscape(row.value("fat").toString())
+             << csvEscape(row.value("sugar").toString())
+             << csvEscape(row.value("sodium").toString())
              << csvEscape(row.value("created_at").toString());
 
         lines << cols.join(',');
@@ -223,7 +284,9 @@ QVariantMap InventoryManager::findCachedProduct(const QString &barcode)
 
     // 1) Try cache table first
     q.prepare(R"SQL(
-        SELECT barcode, name, brand, size, image, image_local, updated_at
+        SELECT barcode, name, brand, size, image, image_local,
+               calories, protein, carbs, fat, sugar, sodium,
+               updated_at
         FROM product_cache
         WHERE barcode = :barcode
         LIMIT 1
@@ -242,13 +305,21 @@ QVariantMap InventoryManager::findCachedProduct(const QString &barcode)
         out["size"] = q.value(3).toString();
         out["image"] = q.value(4).toString();
         out["image_local"] = q.value(5).toString();
-        out["updated_at"] = q.value(6).toLongLong();
+        out["calories"] = q.value(6);
+        out["protein"] = q.value(7);
+        out["carbs"] = q.value(8);
+        out["fat"] = q.value(9);
+        out["sugar"] = q.value(10);
+        out["sodium"] = q.value(11);
+        out["updated_at"] = q.value(12).toLongLong();
         return out;
     }
 
     // 2) Fallback: if already saved in inventory before cache existed
     q.prepare(R"SQL(
-        SELECT barcode, name, brand, size, image, created_at
+        SELECT barcode, name, brand, size, image,
+               calories, protein, carbs, fat, sugar, sodium,
+               created_at
         FROM inventory
         WHERE barcode = :barcode
         ORDER BY created_at DESC
@@ -267,7 +338,13 @@ QVariantMap InventoryManager::findCachedProduct(const QString &barcode)
         out["brand"] = q.value(2).toString();
         out["size"] = q.value(3).toString();
         out["image"] = q.value(4).toString();
-        out["updated_at"] = q.value(5).toLongLong();
+        out["calories"] = q.value(5);
+        out["protein"] = q.value(6);
+        out["carbs"] = q.value(7);
+        out["fat"] = q.value(8);
+        out["sugar"] = q.value(9);
+        out["sodium"] = q.value(10);
+        out["updated_at"] = q.value(11).toLongLong();
         // image_local not known from inventory fallback
         out["image_local"] = QString();
         return out;
@@ -341,14 +418,28 @@ bool InventoryManager::cacheProduct(const QVariantMap &product)
 
     // Upsert into cache
     q.prepare(R"SQL(
-        INSERT INTO product_cache (barcode, name, brand, size, image, image_local, updated_at)
-        VALUES (:barcode, :name, :brand, :size, :image, :image_local, :updated_at)
+        INSERT INTO product_cache (
+            barcode, name, brand, size, image, image_local,
+            calories, protein, carbs, fat, sugar, sodium,
+            updated_at
+        )
+        VALUES (
+            :barcode, :name, :brand, :size, :image, :image_local,
+            :calories, :protein, :carbs, :fat, :sugar, :sodium,
+            :updated_at
+        )
         ON CONFLICT(barcode) DO UPDATE SET
             name = excluded.name,
             brand = excluded.brand,
             size = excluded.size,
             image = excluded.image,
             image_local = excluded.image_local,
+            calories = excluded.calories,
+            protein = excluded.protein,
+            carbs = excluded.carbs,
+            fat = excluded.fat,
+            sugar = excluded.sugar,
+            sodium = excluded.sodium,
             updated_at = excluded.updated_at
     )SQL");
 
@@ -358,6 +449,12 @@ bool InventoryManager::cacheProduct(const QVariantMap &product)
     q.bindValue(":size", product.value("size").toString());
     q.bindValue(":image", imageUrl);
     q.bindValue(":image_local", imageLocal);
+    q.bindValue(":calories", normalizedNumber(product.value("calories")));
+    q.bindValue(":protein", normalizedNumber(product.value("protein")));
+    q.bindValue(":carbs", normalizedNumber(product.value("carbs")));
+    q.bindValue(":fat", normalizedNumber(product.value("fat")));
+    q.bindValue(":sugar", normalizedNumber(product.value("sugar")));
+    q.bindValue(":sodium", normalizedNumber(product.value("sodium")));
     q.bindValue(":updated_at", QDateTime::currentSecsSinceEpoch());
 
     if (!q.exec()) {
