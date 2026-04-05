@@ -88,7 +88,7 @@ Item {
         target: productLookup
 
         function onProductReady(product) {
-            inventoryManager.cacheProduct(product)   // <--- add this
+            inventoryManager.cacheProduct(product)
             AppState.currentProduct = product
             root.goConfirm(product)
         }
