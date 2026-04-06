@@ -4,7 +4,7 @@ project(Kiosk VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Network Sql SerialPort)
+find_package(Qt6 REQUIRED COMPONENTS Quick Network Sql SerialPort Bluetooth)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -16,6 +16,8 @@ qt_add_executable(appKiosk
     webuiserver.h
     inventorymanager.h
     inventorymanager.cpp
+    blebarcodeclient.h
+    blebarcodeclient.cpp
 )
 
 # Embed web UI files into the binary
@@ -45,5 +47,5 @@ qt_add_resources(appKiosk "webui"
 )
 
 target_link_libraries(appKiosk
-    PRIVATE Qt6::Quick Qt6::Network Qt6::Sql Qt6::SerialPort
+    PRIVATE Qt6::Quick Qt6::Network Qt6::Sql Qt6::SerialPort Qt6::Bluetooth
 )
