@@ -9,7 +9,6 @@
 
 class QLowEnergyService;
 class QLowEnergyCharacteristic;
-class QTimer;
 
 class BleBarcodeClient : public QObject
 {
@@ -69,6 +68,4 @@ private:
     bool m_connected = false;
     bool m_discoveryRunning = false;
     bool m_isConnecting = false;
-    bool m_stopping = false;
-    QTimer *m_reconnectTimer = nullptr;
 };

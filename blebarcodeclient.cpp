@@ -28,22 +28,11 @@ BleBarcodeClient::BleBarcodeClient(QObject *parent)
     connect(m_discoveryAgent, &QBluetoothDeviceDiscoveryAgent::errorOccurred,
             this, &BleBarcodeClient::onScanError);
 
-    m_reconnectTimer = new QTimer(this);
-    m_reconnectTimer->setSingleShot(true);
-    m_reconnectTimer->setInterval(2000);
-    connect(m_reconnectTimer, &QTimer::timeout, this, [this]() {
-        startScan();
-    });
-
     setStatus(QStringLiteral("Scanner: Disconnected - reconnecting..."), false);
 }
 
 BleBarcodeClient::~BleBarcodeClient()
 {
-    m_stopping = true;
-    if (m_reconnectTimer) {
-        m_reconnectTimer->stop();
-    }
     cleanupService();
     cleanupController();
 }
@@ -106,9 +95,6 @@ void BleBarcodeClient::onControllerConnected()
 
 void BleBarcodeClient::onControllerDisconnected()
 {
-    if (m_stopping)
-        return;
-
     m_isConnecting = false;
     cleanupService();
     cleanupController();
@@ -119,9 +105,6 @@ void BleBarcodeClient::onControllerDisconnected()
 void BleBarcodeClient::onControllerErrorOccurred(QLowEnergyController::Error error)
 {
     Q_UNUSED(error);
-    if (m_stopping)
-        return;
-
     m_isConnecting = false;
     cleanupService();
     cleanupController();
@@ -139,7 +122,6 @@ void BleBarcodeClient::onServiceDiscovered(const QBluetoothUuid &service)
 void BleBarcodeClient::onServiceScanDone()
 {
     if (!m_service) {
-        m_isConnecting = false;
         setStatus(QStringLiteral("Scanner: Disconnected - reconnecting..."), false);
         cleanupController();
         scheduleReconnect();
@@ -239,7 +221,7 @@ void BleBarcodeClient::cleanupController()
     if (!m_controller)
         return;
 
-    m_controller->disconnect(this);
+    m_controller->disconnectFromDevice();
     m_controller->deleteLater();
     m_controller = nullptr;
 }
@@ -255,13 +237,12 @@ void BleBarcodeClient::cleanupService()
 
 void BleBarcodeClient::scheduleReconnect()
 {
-    if (m_stopping || m_reconnectTimer->isActive())
-        return;
-
     if (m_discoveryAgent->isActive() || m_discoveryRunning || m_controller || m_isConnecting)
         return;
 
-    m_reconnectTimer->start();
+    QTimer::singleShot(2000, this, [this]() {
+        startScan();
+    });
 }
 
 void BleBarcodeClient::setStatus(const QString &status, bool connectedNow)
