@@ -10,28 +10,32 @@ Item {
 
     ProductLookup { id: productLookup }
 
+    function processBarcode(code) {
+        code = code.trim()
+        if (code.length === 12)
+            code = "0" + code
+
+        AppState.setBarcode(code)
+
+        // OFFLINE-FIRST: check local cache first
+        const cached = inventoryManager.findCachedProduct(code)
+        if (cached && cached.barcode) {
+            AppState.currentProduct = cached
+            root.goConfirm(cached)
+            return
+        }
+
+        // Not cached -> network lookup
+        productLookup.lookup(code)
+    }
+
     Components.BarcodeWedge {
         id: wedge
         anchors.fill: parent
         focus: true
 
         onScanned: (code) => {
-            code = code.trim()
-            if (code.length === 12)
-                code = "0" + code
-
-            AppState.setBarcode(code)
-
-            // OFFLINE-FIRST: check local cache first
-            const cached = inventoryManager.findCachedProduct(code)
-            if (cached && cached.barcode) {
-                AppState.currentProduct = cached
-                root.goConfirm(cached)
-                return
-            }
-
-            // Not cached -> network lookup
-            productLookup.lookup(code)
+            root.processBarcode(code)
         }
 
     }
@@ -75,7 +79,7 @@ Item {
 
 
             Text {
-                text: "Ready to scan"
+                text: bleBarcodeClient ? bleBarcodeClient.scannerStatus : "Scanner: Unavailable"
                 font.pixelSize: 14
                 color: "#7f8aa3"
                 horizontalAlignment: Text.AlignHCenter
@@ -96,6 +100,14 @@ Item {
 
         function onError(message) {
             console.log("LOOKUP ERROR:", message)
+        }
+    }
+
+    Connections {
+        target: bleBarcodeClient
+
+        function onBarcodeReceived(barcode) {
+            root.processBarcode(barcode)
         }
     }
 }
