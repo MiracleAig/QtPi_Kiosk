@@ -77,9 +77,8 @@ Item {
                 wrapMode: Text.WordWrap
             }
 
-
             Text {
-                text: bleBarcodeClient ? bleBarcodeClient.scannerStatus : "Scanner: Unavailable"
+                text: "Scanner: USB keyboard-wedge mode"
                 font.pixelSize: 14
                 color: "#7f8aa3"
                 horizontalAlignment: Text.AlignHCenter
@@ -103,11 +102,4 @@ Item {
         }
     }
 
-    Connections {
-        target: bleBarcodeClient
-
-        function onBarcodeReceived(barcode) {
-            root.processBarcode(barcode)
-        }
-    }
 }
