@@ -11,7 +11,6 @@
 #include "productlookup.h"
 #include "inventorymanager.h"
 #include "webuiserver.h"
-#include "blebarcodeclient.h"
 
 class SerialMonitorEmulator : public QObject
 {
@@ -110,9 +109,6 @@ int main(int argc, char *argv[])
     InventoryManager inventoryManager;
     engine.rootContext()->setContextProperty("inventoryManager", &inventoryManager);
 
-    BleBarcodeClient bleBarcodeClient;
-    engine.rootContext()->setContextProperty("bleBarcodeClient", &bleBarcodeClient);
-
     WebUiServer webUiServer(&inventoryManager);
     const QByteArray bindEnv = qgetenv("KIOSK_WEBUI_BIND");
     const QByteArray portEnv = qgetenv("KIOSK_WEBUI_PORT");
@@ -129,8 +125,6 @@ int main(int argc, char *argv[])
 
     const quint16 bindPort = portEnv.isEmpty() ? 8080 : portEnv.toUShort();
     webUiServer.start(bindAddress, bindPort);
-
-    bleBarcodeClient.start();
 
     engine.load(QUrl(QStringLiteral("qrc:/qt/qml/Kiosk/Main.qml")));
     if (engine.rootObjects().isEmpty())
