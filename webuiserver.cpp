@@ -447,5 +447,84 @@ void WebUiServer::handleConnection()
         return;
     }
 
+    // Protected add-food endpoint
+    if (req.path == "/api/add-food") {
+        if (!isPost) { respondMethodNotAllowed(socket); return; }
+        if (!requireAuth()) return;
+
+        if (!m_inventoryManager) {
+            writeResponse(socket, 500, "application/json; charset=utf-8",
+                          R"({"ok":false,"error":"Inventory manager unavailable"})");
+            return;
+        }
+
+        QJsonParseError parseError;
+        const QJsonDocument doc = QJsonDocument::fromJson(req.body, &parseError);
+        if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+            writeResponse(socket, 400, "application/json; charset=utf-8",
+                          R"({"ok":false,"error":"Invalid JSON payload"})");
+            return;
+        }
+
+        QVariantMap product = doc.object().toVariantMap();
+        const QString barcode = product.value("barcode").toString().trimmed();
+        if (barcode.isEmpty()) {
+            writeResponse(socket, 400, "application/json; charset=utf-8",
+                          R"({"ok":false,"error":"barcode is required"})");
+            return;
+        }
+        product["barcode"] = barcode;
+
+        if (!m_inventoryManager->insertProduct(product)) {
+            writeResponse(socket, 500, "application/json; charset=utf-8",
+                          R"({"ok":false,"error":"Failed to insert product"})");
+            return;
+        }
+
+        writeResponse(socket, 200, "application/json; charset=utf-8", R"({"ok":true})");
+        return;
+    }
+
+    // Protected delete-food endpoint
+    if (req.path == "/api/delete-food") {
+        if (!isPost) { respondMethodNotAllowed(socket); return; }
+        if (!requireAuth()) return;
+
+        if (!m_inventoryManager) {
+            writeResponse(socket, 500, "application/json; charset=utf-8",
+                          R"({"ok":false,"error":"Inventory manager unavailable"})");
+            return;
+        }
+
+        QJsonParseError parseError;
+        const QJsonDocument doc = QJsonDocument::fromJson(req.body, &parseError);
+        if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+            writeResponse(socket, 400, "application/json; charset=utf-8",
+                          R"({"ok":false,"error":"Invalid JSON payload"})");
+            return;
+        }
+
+        QVariantMap criteria = doc.object().toVariantMap();
+        const int id = criteria.value("id").toInt();
+        const QString barcode = criteria.value("barcode").toString().trimmed();
+        if (id <= 0 && barcode.isEmpty()) {
+            writeResponse(socket, 400, "application/json; charset=utf-8",
+                          R"({"ok":false,"error":"id or barcode is required"})");
+            return;
+        }
+
+        criteria["id"] = id;
+        criteria["barcode"] = barcode;
+
+        if (!m_inventoryManager->deleteProduct(criteria)) {
+            writeResponse(socket, 404, "application/json; charset=utf-8",
+                          R"({"ok":false,"error":"Food item not found"})");
+            return;
+        }
+
+        writeResponse(socket, 200, "application/json; charset=utf-8", R"({"ok":true})");
+        return;
+    }
+
     respondNotFound(socket);
 }

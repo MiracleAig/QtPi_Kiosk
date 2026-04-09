@@ -200,6 +200,50 @@ bool InventoryManager::insertProduct(const QVariantMap &product)
     return true;
 }
 
+bool InventoryManager::deleteProduct(const QVariantMap &criteria)
+{
+    if (!m_ready && !(ensureDb() && ensureSchema())) return false;
+
+    auto db = QSqlDatabase::database(m_connName);
+    QSqlQuery q(db);
+
+    const int id = criteria.value("id").toInt();
+    const QString barcode = criteria.value("barcode").toString().trimmed();
+
+    if (id > 0) {
+        q.prepare("DELETE FROM inventory WHERE id = :id");
+        q.bindValue(":id", id);
+    } else if (!barcode.isEmpty()) {
+        q.prepare(R"SQL(
+            DELETE FROM inventory
+            WHERE id = (
+                SELECT id
+                FROM inventory
+                WHERE barcode = :barcode
+                ORDER BY created_at DESC, id DESC
+                LIMIT 1
+            )
+        )SQL");
+        q.bindValue(":barcode", barcode);
+    } else {
+        emit errorOccurred("Missing delete criteria (id or barcode)");
+        return false;
+    }
+
+    if (!q.exec()) {
+        emit errorOccurred(q.lastError().text());
+        return false;
+    }
+
+    if (q.numRowsAffected() <= 0) {
+        emit errorOccurred("No inventory item matched delete criteria");
+        return false;
+    }
+
+    emit inventoryChanged();
+    return true;
+}
+
 QVariantList InventoryManager::loadInventory(int limit)
 {
     QVariantList out;

@@ -12,6 +12,7 @@ public:
     explicit InventoryManager(QObject *parent = nullptr);
 
     Q_INVOKABLE bool insertProduct(const QVariantMap &product);
+    Q_INVOKABLE bool deleteProduct(const QVariantMap &criteria);
     Q_INVOKABLE QVariantList loadInventory(int limit = 0);
     Q_INVOKABLE QString exportInventoryCsv();
 

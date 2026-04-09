@@ -94,7 +94,7 @@ function renderInventory() {
       <td>${barcode}</td>
       <td>
         <div class="inline-actions">
-          <button class="btn btn-danger" onclick="event.stopPropagation(); deleteFood('${escapeJs(item.barcode || "")}')">
+          <button class="btn btn-danger" onclick="event.stopPropagation(); deleteFood('${escapeJs(item.id || "")}', '${escapeJs(item.barcode || "")}')">
             Delete
           </button>
         </div>
@@ -208,17 +208,21 @@ async function handleAddFood(event) {
   }
 }
 
-async function deleteFood(barcode) {
-  if (!barcode) return;
+async function deleteFood(id, barcode) {
+  if (!id && !barcode) return;
   if (!confirm("Delete this food from inventory?")) return;
 
   try {
+    const payload = {};
+    if (id) payload.id = Number(id);
+    if (barcode) payload.barcode = barcode;
+
     const response = await fetch("/api/delete-food", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ barcode })
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();
